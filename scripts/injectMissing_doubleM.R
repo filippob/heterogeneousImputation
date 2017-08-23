@@ -1,8 +1,8 @@
-#######################################
+####################################
 # SCRIPT TO INJECT ARTIFICIAL
 # MISSING GENOTYPES INTO A PED FILE
-# METHOD OF ODD AND EVEN COLUMN INDEXES
-#######################################
+# DUPLICATE MISSING MATRIX
+####################################
 
 ## EXAMPLE! (real data to follow)
 
@@ -13,9 +13,6 @@ proportionMissing <- 0.20
 
 # we create a (n*2m) ped file (without the first 6 descriptive columns)
 ped <- matrix(rnorm(n*2*m),nrow=n, byrow = TRUE)
-
-# now we go back to reasoning in terms of our n*m matrix
-#vector of false
 
 ###############################################################################################
 # FUNCTIONS
@@ -30,38 +27,30 @@ getIndexVector <- function(n,m,p=proportionMissing) {
   return(which(vec))
 }
 
-
 #function to set some genotypes to missing as specified by getIndexVector()
-#method of using odd and even column indexes
-setToMissing <- function(ped,inds) {
+#method of doubling the missing matrix
+setToMissing_doubleM <- function(ped,inds) {
   
   n <- nrow(ped)
   m <- ncol(ped)/2
   vec <- rep(FALSE,n*m)
   vec[inds] <- TRUE
   
-  #this vector is now used to create a n*m matrix of TRUE/FALSE (TRUEs to be set to missing)
-  missing <- matrix(vec,nrow=n,byrow = TRUE)
+  #matrix of missing values
+  missing <- matrix(vec,nrow = n, byrow = TRUE)
   
-  #now we get the indexes of the missing cells
-  idx <- which(missing, arr.ind = TRUE)
+  # (n*m) --> (n*2m) TO let it known that the m is actually 2 columns per SNP 
+  missing <- missing[,rep(1:ncol(missing),rep(2,ncol(missing)))]
   
-  #now we work on the indexes to convert (n*m) to (n*2m)
-  seq_odd <- seq(1,(ncol(ped)-1),by=2) #index of odd column indexes (original ped-6)
-  seq_even <- seq(2,ncol(ped),by=2) #index of even column indexes (original ped-6)
-  
-  #we create a matrix with all the index pairs for the ped-6 file
-  idx2 <- cbind(rep(idx[,"row"],2),c(seq_odd[idx[,"col"]],seq_even[idx[,"col"]]))
-  
-  #we use the indexes to set some genotypes to missing 
-  ped[idx2] <- NA
+  #assign missing to NAs
+  ped[missing] <- NA
   return(ped)
 }
 
+
 ###############################################################################################
 
-
 idx <- getIndexVector(n = nrow(ped), m = ncol(ped)/2, p = proportionMissing)
-M <- setToMissing(ped,idx)
+M <- setToMissing_doubleM(ped,idx)
 
 
