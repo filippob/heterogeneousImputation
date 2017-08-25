@@ -10,3 +10,5 @@ Two main scenarios are envisaged:
 
 1. gap-filling: after genotyping, a small proportion of locus-sample cells are left uncalled. These missing genotypes usually need to be imputed before moving on to downstream analyses.
 2. mixed geneotyping strategies: to optimize costs, typically a fraction of the samples is genotyped with a high-density SNP array, while the remaining samples are genotyped with a low density array. Here the objective is to impute from low to high density (more challenging scenario)
+
+Go to this repository's [https://github.com/filippob/heterogeneousImputation/wiki](Wiki)
