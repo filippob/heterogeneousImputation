@@ -12,8 +12,9 @@ source("functions.R")
 ## read input from command line
 args = commandArgs(trailingOnly = TRUE)
 
-print(paste("arg1: ",args[1],sep=" "))
-print(paste("arg2: ", args[2],sep=" "))
+print(paste("Original raw file: ",args[1],sep=" "))
+print(paste("Imputed raw file: ", args[2],sep=" "))
+print(paste("File with indexes: ", args[3],sep=" "))
 
 originalRaw_file = args[1]
 impRaw_file = args[2]
@@ -97,7 +98,7 @@ print("Writing out results to results.csv")
 
 if(!file.exists("results.csv")){
   write.table(ergebnisse,"results.csv",col.names = TRUE,row.names = FALSE, sep=",")
-} else write.table(res,"results.csv",append=TRUE,sep=",",col.names = FALSE,row.names = FALSE)
+} else write.table(ergebnisse,"results.csv",append=TRUE,sep=",",col.names = FALSE,row.names = FALSE)
 
 ## to be done: measure accuracy for AA (0), AB (1) and BB (2) genotypes. Beware of possible NA's (not with the cow data, but with the sheep data)
 
