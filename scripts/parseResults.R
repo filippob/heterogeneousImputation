@@ -66,20 +66,20 @@ D <- ddply(res,"originalGenotypes",function(x) {
   return("accuracy"=accuracy)
 })
 
+dd <- ddply(res,"originalGenotypes",function(x) {
+  
+  n= nrow(x)
+  to0= sum(x$imputedGenotypes==0)
+  to1= sum(x$imputedGenotypes==1)
+  to2= sum(x$imputedGenotypes==2)
+  
+  return(c("n"=n,"to0"=to0,"to1"=to1,"to2"=to2))
+})
+
 ##preparing results
 print("Preparing dataframe with results")
 
-ergebnisse <- data.frame(
-  "file_name"=NULL,
-  "sample_size"=NULL,
-  "avgMAF"=NULL,
-  "injectedMissing"=NULL,
-  "totalAccuracy"=NULL,
-  "accuracyAA"=NULL,
-  "accuracyAB"=NULL,
-  "accuracyBB"=NULL
-)
-
+elapsed_time <- scan("time_results")
 filename <- gsub("\\.raw$","",basename(originalRaw_file))
 
 ergebnisse <- data.frame(
@@ -90,7 +90,18 @@ ergebnisse <- data.frame(
   "totalAccuracy"=totalAccuracy,
   "accuracyAA"=D[D$originalGenotypes==0,"V1"],
   "accuracyAB"=D[D$originalGenotypes==1,"V1"],
-  "accuracyBB"=D[D$originalGenotypes==2,"V1"]
+  "accuracyBB"=D[D$originalGenotypes==2,"V1"],
+  "elapsed_time"=elapsed_time,
+  "nAA"=dd[dd$originalGenotypes==0,"n"],
+  "nAB"=dd[dd$originalGenotypes==1,"n"],
+  "nBB"=dd[dd$originalGenotypes==2,"n"],
+  "AAtoAB"=dd[dd$originalGenotypes==0,"to1"],
+  "AAtoBB"=dd[dd$originalGenotypes==0,"to2"],
+  "ABtoAA"=dd[dd$originalGenotypes==1,"to0"],
+  "ABtoBB"=dd[dd$originalGenotypes==1,"to2"],
+  "BBtoAA"=dd[dd$originalGenotypes==2,"to0"],
+  "BBtoAB"=dd[dd$originalGenotypes==2,"to1"],
+  "currentDate"= as.numeric(Sys.time())
 )
 
 ## writing out results to 'results.csv'
