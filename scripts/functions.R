@@ -59,3 +59,31 @@ setToMissing_doubleM <- function(ped,inds) {
   return(ped)
 }
 
+#######################
+### For parseResults.R
+#######################
+## function to extract genotypes from a .raw Plink file, corresponding to indexes in a vector
+retrieveGenotypes <- function(rawPed,idx) {
+  
+  if(all(c("FID","IID","PAT","MAT","SEX","PHENOTYPE") %in% names(rawPed))) rawPed <- rawPed[,-c(1:6)]
+  #get n. of samples and markers
+  n <- nrow(rawPed)
+  m <- ncol(rawPed)
+  
+  vec <- rep(FALSE,n*m)
+  vec[idx] <- TRUE
+  
+  M <- matrix(vec,nrow=n,byrow = TRUE)
+  inds <- which(M, arr.ind = TRUE)
+  
+  genotypes <- rawPed[inds]
+  return(genotypes)
+}
+
+
+##############
+## Miscellanea
+##############
+
+#function to trim leading/trailing blanks
+trim <- function (x) gsub("^\\s+|\\s+$", "", x)
