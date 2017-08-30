@@ -1,6 +1,6 @@
 ## Reading the .ped file in from the shared server folder 
 ##Ensure that R knows that the SNP calls are characters, otherwise will read T as TRUE etc
-## run as: Rscript --vanilla parseResults.R <pedfile> <proportionMissing>
+## run as: Rscript --vanilla parseResults.R <original_ped.raw> <imputed_ped.raw> <indexes>
 #ped <- read.table("/storage/share/jody/data/cowSubset.ped", colClasses = c("character"), header = FALSE)
 
 ## load libraries
@@ -56,6 +56,7 @@ print(paste(length(imputedGenotypes),"imputed genotypes retrieved from the origi
 
 ## dataframe with results
 res <- cbind.data.frame(originalGenotypes,imputedGenotypes)
+res <- na.omit(res)
 
 ## measure total accuracy of imputation
 totalAccuracy <- sum(res$originalGenotypes==res$imputedGenotypes)/nrow(res)
@@ -82,10 +83,14 @@ print("Preparing dataframe with results")
 elapsed_time <- scan("time_results")
 filename <- gsub("\\.raw$","",basename(originalRaw_file))
 
+##maf
+freq <- read.table("freq.frq",header = TRUE)
+print("MAF read from freq.frq (Plink)")
+
 ergebnisse <- data.frame(
   "file_name"=filename,
   "sample_size"=n,
-  "avgMAF"=NA,
+  "avgMAF"=mean(freq$MAF,na.rm = TRUE),
   "injectedMissing"=length(idx),
   "totalAccuracy"=totalAccuracy,
   "accuracyAA"=D[D$originalGenotypes==0,"V1"],
