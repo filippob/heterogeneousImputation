@@ -1,5 +1,5 @@
 # load functions to inject missing
-source("functions.R")
+source("/storage/share/jody/software/scripts/functions.R")
 
 ## Reading the .ped file in from the shared server folder 
 ##Ensure that R knows that the SNP calls are characters, otherwise will read T as TRUE etc
