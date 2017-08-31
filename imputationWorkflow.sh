@@ -34,9 +34,16 @@ fi
 
 echo "#######################################"
 echo "## STEP 0"
+echo "## sample individuals from the ped file"
+echo "#######################################"
+/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/sampleRows.R ${INPUTFILE}.ped 100
+plink --cow --file /storage/share/jody/data/experimentalData/${INPUTFILE} --keep keepIDs.txt --recode --out subset
+
+echo "#######################################"
+echo "## STEP 0.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
-plink --cow --file $INPUTFILE --recode A --out originalRaw
+plink --cow --file subset --recode A --out originalRaw
 rm originalRaw.nosex originalRaw.log
 
 echo "#######################################"
@@ -45,8 +52,8 @@ echo "## injecting artificial missing"
 echo "#######################################"
 ## STEP 1
 ## injecting artificial missing genotypes
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/injectMissing.R ${INPUTFILE}.ped $MISSING
-cp ${INPUTFILE}.map artificialMissing.map # copy the map file to where the injected ped is created
+/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/injectMissing.R subset.ped $MISSING
+cp subset.map artificialMissing.map # copy the map file to where the injected ped is created
 
 echo "#######################################"
 echo "## STEP 2"
