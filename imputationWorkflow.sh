@@ -22,6 +22,10 @@ case $key in
     MISSING="$2"
     shift # past argument
     ;;
+    -n|--sample_size)
+    SAMPLESIZE="$2"
+    shift # past argument
+    ;;
     *)
             # unknown option
     ;;
@@ -30,6 +34,7 @@ shift # past argument or value
 done
 echo INPUT FILE  = "${INPUTFILE}"
 echo PROPORTION OF MISSING     = "${MISSING}"
+echo SAMPLE SIZE     = "${SAMPLESIZE}"
 if [[ -n $1 ]]; then
     echo "Last line of file specified as non-opt/last argument:"
     tail -1 $1
@@ -39,7 +44,7 @@ echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/sampleRows.R ${INPUTFILE}.ped 100
+/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
 plink --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
 
 echo "#######################################"
