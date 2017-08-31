@@ -36,7 +36,8 @@ idx <- getIndexVector(n = n, m = m, p = proportionMissing)
 
 print(paste("In total,",length(idx),"SNP genotypes are being set to missing",sep=" "))
 
-M <- setToMissing_doubleM(ped,idx)
+# M <- setToMissing_doubleM(ped,idx)
+M <- setToMissing_colInds(ped,idx)
 
 ##Adding the first 6 informative lines back to the .ped file 
 ped <- cbind.data.frame(ped6,M)

@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# run as: bash imputationWorkflow.sh -f <plink_filename> -p <proportion_missing> -n <sample_size>
+# run as: bash imputationWorkflow.sh -f <plink_filename> -p <proportion_missing> -n <sample_size> -o <outdir>
 # <plink_filename>: Plink name without .ped/.map extension
 # <proportion_missing>: proportion of markers 
-# Use -gt 1 to consume two arguments per pass in the loop (e.g. each
+# <outdir> root output directory
+# Use -gt 1 to consume two arguments per pass in
+# the loop (e.g. each
 # argument has a corresponding value to go with it).
 # Use -gt 0 to consume one or more arguments per pass in the loop (e.g.
 # some arguments don't have a corresponding value to go with it such
@@ -26,19 +28,42 @@ case $key in
     SAMPLESIZE="$2"
     shift # past argument
     ;;
+    -o|--outdir)
+    OUTDIR="$2"
+    shift # past argument
+    ;;
     *)
             # unknown option
     ;;
 esac
 shift # past argument or value
 done
+
+echo "########################################################"
+echo "## WRAPPER BASH SCRIPT TO RUN THE IMPUTATION EXPERIMENTS"
+echo "########################################################"
+
 echo INPUT FILE  = "${INPUTFILE}"
 echo PROPORTION OF MISSING     = "${MISSING}"
 echo SAMPLE SIZE     = "${SAMPLESIZE}"
+echo OUT FOLDER     = "${OUTDIR}"
+
 if [[ -n $1 ]]; then
     echo "Last line of file specified as non-opt/last argument:"
     tail -1 $1
 fi
+
+echo "#######################################"
+echo "## STEP -1"
+echo "## create unique folders for each run"
+echo "#######################################"
+tmstmp=$(date +%N)
+folderName=$( basename $INPUTFILE).${SAMPLESIZE}.${MISSING}.${tmstmp}
+
+echo "Folder name is:$folderName"
+cd $OUTDIR
+mkdir $folderName
+cd $folderName
 
 echo "#######################################"
 echo "## STEP 0"
@@ -89,6 +114,6 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt ${INPUTFILE}
+/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt $( basename $INPUTFILE)
 
 
