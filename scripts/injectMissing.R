@@ -43,7 +43,7 @@ ped <- cbind.data.frame(ped6,M)
 
 print("Writing out the ped file with artificial missing genotypes...")
 ##Writing the .ped file back out to the wd   
-write.table(ped, file = "/storage/share/jody/TEMP/artificialMissing.ped", quote = FALSE, na = "0", row.names = FALSE, col.names = FALSE)
+write.table(ped, file = "artificialMissing.ped", quote = FALSE, na = "0", row.names = FALSE, col.names = FALSE)
 
 ## must also write out the indexes to know which SNPs were removed and used as 'missing' data/genotypes
 write.table(idx, file = "indexes.txt", quote = FALSE, na = "0", row.names = FALSE, col.names = FALSE)
