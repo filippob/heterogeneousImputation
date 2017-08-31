@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# run as: bash imputationWorkflow.sh -f <plink_filename> -p <proportion_missing> -n <sample_size>
+# <plink_filename>: Plink name without .ped/.map extension
+# <proportion_missing>: proportion of markers 
 # Use -gt 1 to consume two arguments per pass in the loop (e.g. each
 # argument has a corresponding value to go with it).
 # Use -gt 0 to consume one or more arguments per pass in the loop (e.g.
@@ -27,7 +30,7 @@ shift # past argument or value
 done
 echo INPUT FILE  = "${INPUTFILE}"
 echo PROPORTION OF MISSING     = "${MISSING}"
-if [[-n $1]]; then
+if [[ -n $1 ]]; then
     echo "Last line of file specified as non-opt/last argument:"
     tail -1 $1
 fi
@@ -37,7 +40,7 @@ echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
 /storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/sampleRows.R ${INPUTFILE}.ped 100
-plink --cow --file /storage/share/jody/data/experimentalData/${INPUTFILE} --keep keepIDs.txt --recode --out subset
+plink --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
 
 echo "#######################################"
 echo "## STEP 0.5"
@@ -81,6 +84,6 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt
+/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt ${INPUTFILE}
 
 

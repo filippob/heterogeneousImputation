@@ -1,6 +1,6 @@
 ## Reading the .ped file in from the shared server folder 
 ##Ensure that R knows that the SNP calls are characters, otherwise will read T as TRUE etc
-## run as: Rscript --vanilla parseResults.R <original_ped.raw> <imputed_ped.raw> <indexes>
+## run as: Rscript --vanilla parseResults.R <original_ped.raw> <imputed_ped.raw> <indexes> <experiment_name>
 #ped <- read.table("/storage/share/jody/data/cowSubset.ped", colClasses = c("character"), header = FALSE)
 
 ## load libraries
@@ -15,10 +15,12 @@ args = commandArgs(trailingOnly = TRUE)
 print(paste("Original raw file: ",args[1],sep=" "))
 print(paste("Imputed raw file: ", args[2],sep=" "))
 print(paste("File with indexes: ", args[3],sep=" "))
+print(paste("experiment name: ", args[4],sep=" "))
 
 originalRaw_file = args[1]
 impRaw_file = args[2]
 idx_file = args[3]
+experiment = args[4]
 
 # originalRaw_file = "/storage/share/jody/data/cowChr12.raw"
 # impRaw_file =  "/storage/share/jody/filippo/heterogeneousImputation/scripts/devR/imputed.raw"
@@ -39,7 +41,8 @@ print(paste(n,"samples and",m,"markers read from",originalRaw_file,sep=" "))
 idx <- read.table(idx_file, header = FALSE, colClasses = c("numeric"))
 idx <- idx$V1
 
-print(paste("Proportion of missing genotypes:", round(length(idx)/(n*m),3), sep= " "))
+proportionMissing <- round(length(idx)/(n*m),3)
+print(paste("Proportion of missing genotypes:", proportionMissing, sep= " "))
 
 ## read in the imputed geotypes in .raw format
 impRaw <- read.table(impRaw_file,header = TRUE)
@@ -81,14 +84,14 @@ dd <- ddply(res,"originalGenotypes",function(x) {
 print("Preparing dataframe with results")
 
 elapsed_time <- scan("time_results")
-filename <- gsub("\\.raw$","",basename(originalRaw_file))
+# filename <- gsub("\\.raw$","",basename(originalRaw_file))
 
 ##maf
 freq <- read.table("freq.frq",header = TRUE)
 print("MAF read from freq.frq (Plink)")
 
 ergebnisse <- data.frame(
-  "file_name"=filename,
+  "experiment_name"=experiment,
   "sample_size"=n,
   "avgMAF"=mean(freq$MAF,na.rm = TRUE),
   "injectedMissing"=length(idx),
