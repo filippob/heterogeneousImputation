@@ -58,10 +58,17 @@ echo "## STEP -1"
 echo "## create unique folders for each run"
 echo "#######################################"
 tmstmp=$(date +%N)
-folderName=$( basename $INPUTFILE).${SAMPLESIZE}.${MISSING}.${tmstmp}
+currDate=$(date +%d-%m-%Y)
+folderName=$( basename $INPUTFILE).${SAMPLESIZE}_${MISSING}_${tmstmp}.${currDate}
 
 echo "Folder name is:$folderName"
 cd $OUTDIR
+
+if [ -d "$folderName" ]; then
+>&2 echo "!! ERROR: folder $folderName already exists !!"
+exit
+fi
+
 mkdir $folderName
 cd $folderName
 
