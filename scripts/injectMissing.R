@@ -23,7 +23,7 @@ proportionMissing = as.numeric(args[2])
 
 ## A check for the progress of the script
 print("Reading in the ped file ...")
-ped <- read.table(pedFile, header = FALSE, colClasses = c("character"), na.strings = c("0"))
+ped <- fread(pedFile, header = FALSE, colClasses = c("character"), na.strings = c("0"))
 
 n <- nrow(ped)
 m <- (ncol(ped)-6)/2
@@ -31,8 +31,8 @@ m <- (ncol(ped)-6)/2
 #A check for the progress
 print(paste(n,"samples and",m,"markers were read from",pedFile,sep=" "))
 
-ped6 <- ped[,c(1:6)]
-ped <- ped[,-c(1:6)]
+ped6 <- ped[,1:6, with=FALSE]
+ped <- ped[,7:ncol(ped), with = FALSE]
 
 idx <- getIndexVector(n = n, m = m, p = proportionMissing)
 
@@ -52,6 +52,5 @@ fwrite(ped, file = "artificialMissing.ped", quote = FALSE, na = "0", col.names =
 write.table(idx, file = "indexes.txt", quote = FALSE, na = "0", row.names = FALSE, col.names = FALSE)
 
 print("DONE!!")
-
 
 

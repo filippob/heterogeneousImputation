@@ -5,6 +5,7 @@
 
 ## load libraries
 library("plyr")
+library("data.table")
 
 # load functions to inject missing
 source("/storage/share/jody/software/scripts/functions.R")
@@ -29,8 +30,8 @@ experiment = args[4]
 ###########################################################################################################
 
 ## read in the original data in .raw format
-originalRaw <- read.table(originalRaw_file, header = TRUE)
-originalRaw <- originalRaw[,-c(1:6)]
+originalRaw <- fread(originalRaw_file, header = TRUE)
+originalRaw <- originalRaw[,7:ncol(originalRaw), with = FALSE]
 
 n <- nrow(originalRaw)
 m <- ncol(originalRaw) 
@@ -45,8 +46,8 @@ proportionMissing <- round(length(idx)/(n*m),3)
 print(paste("Proportion of missing genotypes:", proportionMissing, sep= " "))
 
 ## read in the imputed geotypes in .raw format
-impRaw <- read.table(impRaw_file,header = TRUE)
-impRaw <- impRaw[,-c(1:6)]
+impRaw <- fread(impRaw_file,header = TRUE)
+impRaw <- impRaw[,7:ncol(impRaw), with=FALSE]
 
 ## retrieve original and imputed genotypes (0/1/2)
 originalGenotypes <-retrieveGenotypes(originalRaw,idx)
