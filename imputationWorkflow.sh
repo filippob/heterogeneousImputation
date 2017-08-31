@@ -44,7 +44,7 @@ echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
+/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
 plink --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
 
 echo "#######################################"
@@ -60,7 +60,7 @@ echo "## injecting artificial missing"
 echo "#######################################"
 ## STEP 1
 ## injecting artificial missing genotypes
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/injectMissing.R subset.ped $MISSING
+/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/injectMissing.R subset.ped $MISSING
 cp subset.map artificialMissing.map # copy the map file to where the injected ped is created
 
 echo "#######################################"
@@ -89,6 +89,6 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt ${INPUTFILE}
+/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt ${INPUTFILE}
 
 

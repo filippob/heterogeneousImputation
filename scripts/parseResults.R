@@ -93,6 +93,7 @@ print("MAF read from freq.frq (Plink)")
 ergebnisse <- data.frame(
   "experiment_name"=experiment,
   "sample_size"=n,
+  "proportion_missing"=proportionMissing,
   "avgMAF"=mean(freq$MAF,na.rm = TRUE),
   "injectedMissing"=length(idx),
   "totalAccuracy"=totalAccuracy,
