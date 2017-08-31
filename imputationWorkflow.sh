@@ -77,13 +77,13 @@ echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
 /storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
-plink --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
+/storage/software/plink --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
 
 echo "#######################################"
 echo "## STEP 0.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
-plink --cow --file subset --recode A --out originalRaw
+/storage/software/plink --cow --file subset --recode A --out originalRaw
 rm originalRaw.nosex originalRaw.log
 
 echo "#######################################"
@@ -103,7 +103,7 @@ echo "#######################################"
 ## Imputation of missing genotypes
 cp /storage/share/jody/software/Zanardi/PARAMFILE.txt .
 (/usr/bin/time --format "%e" python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4) > imputation_step.log 2> time_results
-plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
+/storage/software/plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
 rm imputedRaw.nosex imputedRaw.log
 
 echo "#######################################"
@@ -112,7 +112,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
+/storage/software/plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
 rm freq.log freq.nosex
 
 echo "#######################################"
