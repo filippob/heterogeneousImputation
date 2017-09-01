@@ -57,9 +57,10 @@ echo "#######################################"
 echo "## STEP -1"
 echo "## create unique folders for each run"
 echo "#######################################"
+PREFIX="POPIMP"
 tmstmp=$(date +%N)
 currDate=$(date +%d-%m-%Y)
-folderName=$( basename $INPUTFILE).${SAMPLESIZE}_${MISSING}_${tmstmp}.${currDate}
+folderName=${PREFIX}_$( basename $INPUTFILE).${SAMPLESIZE}_${MISSING}_${tmstmp}.${currDate}
 
 echo "Folder name is:$folderName"
 cd $OUTDIR
