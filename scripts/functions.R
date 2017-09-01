@@ -65,8 +65,7 @@ setToMissing_doubleM <- function(ped,inds) {
 ## function to extract genotypes from a .raw Plink file, corresponding to indexes in a vector
 retrieveGenotypes <- function(rawPed,idx) {
   
-  rawPed <- as.data.frame(rawPed)
-  if(all(c("FID","IID","PAT","MAT","SEX","PHENOTYPE") %in% names(rawPed))) rawPed <- rawPed[,7:ncol(rawPed), with=FALSE]
+  if(all(c("FID","IID","PAT","MAT","SEX","PHENOTYPE") %in% names(rawPed))) rawPed <- rawPed[,7:ncol(rawPed)]
   #get n. of samples and markers
   n <- nrow(rawPed)
   m <- ncol(rawPed)

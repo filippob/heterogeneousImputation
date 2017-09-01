@@ -50,8 +50,8 @@ impRaw <- fread(impRaw_file,header = TRUE)
 impRaw <- impRaw[,7:ncol(impRaw), with=FALSE]
 
 ## retrieve original and imputed genotypes (0/1/2)
-originalGenotypes <-retrieveGenotypes(originalRaw,idx)
-imputedGenotypes <- retrieveGenotypes(impRaw,idx)
+originalGenotypes <-retrieveGenotypes(as.data.frame(originalRaw),idx)
+imputedGenotypes <- retrieveGenotypes(as.data.frame(impRaw),idx)
 
 # remove large .raw files
 rm(originalRaw,impRaw)
