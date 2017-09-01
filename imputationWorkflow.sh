@@ -124,7 +124,7 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 /storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt $( basename $INPUTFILE)
-rm artificialMissing.ped artificialMissing.map originalRaw.raw imputedRaw.raw subset.ped subset.log subset.map
+rm artificialMissing.ped artificialMissing.map originalRaw.raw imputedRaw.raw subset.ped subset.log subset.map freq.frq
 rm -r OUTPUT/
 
 
