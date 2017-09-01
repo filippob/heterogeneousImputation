@@ -102,7 +102,8 @@ echo "#######################################"
 ## STEP 2
 ## Imputation of missing genotypes
 cp /storage/share/jody/software/Zanardi/PARAMFILE.txt .
-(/usr/bin/time --format "%e" python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4) > imputation_step.log 2> time_results
+#(/usr/bin/time --format "%e" python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4) > imputation_step.log 2> time_results
+python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
 /storage/software/plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
 rm imputedRaw.nosex imputedRaw.log
 

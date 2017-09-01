@@ -3,6 +3,9 @@
 ## run as: Rscript --vanilla parseResults.R <original_ped.raw> <imputed_ped.raw> <indexes> <experiment_name>
 #ped <- read.table("/storage/share/jody/data/cowSubset.ped", colClasses = c("character"), header = FALSE)
 
+end.time <- Sys.time()
+load("time.RData")
+
 ## load libraries
 library("plyr")
 library("data.table")
@@ -84,7 +87,8 @@ dd <- ddply(res,"originalGenotypes",function(x) {
 ##preparing results
 print("Preparing dataframe with results")
 
-elapsed_time <- scan("time_results")
+# elapsed_time <- scan("time_results")
+elapsed_time <- (end.time - start.time)
 # filename <- gsub("\\.raw$","",basename(originalRaw_file))
 
 ##maf

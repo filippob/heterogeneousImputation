@@ -51,6 +51,8 @@ fwrite(ped, file = "artificialMissing.ped", quote = FALSE, na = "0", col.names =
 ## must also write out the indexes to know which SNPs were removed and used as 'missing' data/genotypes
 write.table(idx, file = "indexes.txt", quote = FALSE, na = "0", row.names = FALSE, col.names = FALSE)
 
+start.time <- Sys.time()
+save(start.time,file="time.RData")
 print("DONE!!")
 
 
