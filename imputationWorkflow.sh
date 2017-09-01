@@ -57,7 +57,7 @@ echo "#######################################"
 echo "## STEP -1"
 echo "## create unique folders for each run"
 echo "#######################################"
-PREFIX="POPIMP"
+PREFIX="GAPIMP"
 tmstmp=$(date +%N)
 currDate=$(date +%d-%m-%Y)
 folderName=${PREFIX}_$( basename $INPUTFILE).${SAMPLESIZE}_${MISSING}_${tmstmp}.${currDate}
