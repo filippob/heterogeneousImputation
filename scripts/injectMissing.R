@@ -1,7 +1,5 @@
 library("data.table")
 
-# load functions to inject missing
-source("functions.R")
 
 ## Reading the .ped file in from the shared server folder 
 ##Ensure that R knows that the SNP calls are characters, otherwise will read T as TRUE etc
@@ -12,14 +10,18 @@ args = commandArgs(trailingOnly = TRUE)
 
 print(paste("arg1: ",args[1],sep=" "))
 print(paste("arg2: ", args[2],sep=" "))
+print(paste("arg3:",args[3],sep=" "))
 
 pedFile = args[1]
 proportionMissing = as.numeric(args[2])
+pathMain = args[3]
 
 # Informing the number of column and rows in the data
 #My example for generating the random samples. The 6 removes the first 6 information columns of the ped
 # the /2 takes into account that two columns is equal to one SNP (i.e. 2 alleles)
 
+# load functions to inject missing
+source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))
 
 ## A check for the progress of the script
 print("Reading in the ped file ...")
