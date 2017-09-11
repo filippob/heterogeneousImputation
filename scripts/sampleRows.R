@@ -7,7 +7,7 @@
 library("plyr")
 
 # load functions to inject missing
-source("/storage/share/jody/software/scripts/functions.R")
+source("functions.R")
 
 args = commandArgs(trailingOnly = TRUE)
 

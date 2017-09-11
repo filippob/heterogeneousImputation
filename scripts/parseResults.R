@@ -11,7 +11,7 @@ library("plyr")
 library("data.table")
 
 # load functions to inject missing
-source("/storage/share/jody/software/scripts/functions.R")
+source("scripts/functions.R")
 
 ## read input from command line
 args = commandArgs(trailingOnly = TRUE)
