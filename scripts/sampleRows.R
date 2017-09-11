@@ -6,16 +6,18 @@
 
 library("plyr")
 
-# load functions to inject missing
-source("functions.R")
-
 args = commandArgs(trailingOnly = TRUE)
 
 print(paste("arg1: ",args[1],sep=" "))
 print(paste("arg2: ", args[2],sep=" "))
+print(paste("arg3: ",args[3], sep=" "))
 
 pedFile = args[1]
 sampleSize = as.numeric(args[2])
+pathMain = args[3];
+
+# load functions to inject missing
+source(paste(pathMain,"functions.R",sep="/"))
 
 #get n. of columns
 ncols <-as.numeric(unlist(strsplit(trim(system2("head",paste("-1", pedFile,  "| wc", sep=" "), stdout = TRUE)),split = "\\s+"))[2])
