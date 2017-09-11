@@ -126,7 +126,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-$PLINKPATH --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
+$PLINKPATH --cow --file OUTPUT/BEAGLE_OUT_beagle4_IMPUTED --freq --out freq 
 rm freq.log freq.nosex
 
 echo "#######################################"
