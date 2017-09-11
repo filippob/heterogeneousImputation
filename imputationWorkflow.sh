@@ -90,7 +90,7 @@ echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
-$PLINKPATH --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
+$PLINKPATH --cow --file ${INPUTFILE} --keep keepIDs.txt --maf 0.01 --bp-space 1 --recode --out subset
 
 echo "#######################################"
 echo "## STEP 0.5"
@@ -116,7 +116,7 @@ echo "#######################################"
 ## Imputation of missing genotypes
 cp ${MAINPATH}/Zanardi/PARAMFILE.txt .
 #(/usr/bin/time --format "%e" python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4) > imputation_step.log 2> time_results
-python ${MAINPATH}/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 --plinkqc > imputation_step.log
+python ${MAINPATH}/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
 $PLINKPATH --cow --file OUTPUT/BEAGLE_OUT_beagle4_IMPUTED --recode A --out imputedRaw
 rm imputedRaw.nosex imputedRaw.log
 
