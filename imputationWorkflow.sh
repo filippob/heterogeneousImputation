@@ -58,7 +58,7 @@ fi
 echo "########################################################"
 echo "## MAIN PATHS TO SOFTWARE - FROM pathNames.txt         #"
 echo "########################################################"
-source pathNames.txt
+source heterogeneousImputation/pathNames.txt
 
 echo "Main path to software is ${MAINPATH}"
 echo "Path to Rscript is ${RPATH}"
