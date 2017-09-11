@@ -17,7 +17,7 @@ sampleSize = as.numeric(args[2])
 pathMain = args[3];
 
 # load functions to inject missing
-source(paste(pathMain,"functions.R",sep="/"))
+source(paste(pathMain,"heterogenousImputation/scripts/functions.R",sep="/"))
 
 #get n. of columns
 ncols <-as.numeric(unlist(strsplit(trim(system2("head",paste("-1", pedFile,  "| wc", sep=" "), stdout = TRUE)),split = "\\s+"))[2])
