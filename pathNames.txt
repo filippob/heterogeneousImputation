@@ -1,0 +1,3 @@
+INPATH="/storage/share/jody/software" #path to R scripts and Zanardi/Beagle
+RPATH="/storage/biscarinif/R-3.1.1/bin/Rscript" #path to Rscript
+PLINKPATH="/storage/software/plink" #path to plink1.9

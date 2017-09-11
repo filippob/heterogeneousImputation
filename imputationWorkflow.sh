@@ -56,11 +56,9 @@ fi
 
 ### Hard-coded main paths
 echo "########################################################"
-echo "## HARD-CODED MAIN PATHS TO SOFTWARE                    "
+echo "## MAIN PATHS TO SOFTWARE - FROM pathNames.txt         #"
 echo "########################################################"
-MAINPATH="/storage/share/jody/software" #path to R scripts and Zanardi/Beagle
-RPATH="/storage/biscarinif/R-3.1.1/bin/Rscript" #path to Rscript
-PLINKPATH="/storage/software/plink" #path to plink1.9
+source pathNames.txt
 
 echo "Main path to software is ${MAINPATH}"
 echo "Path to Rscript is ${RPATH}"
