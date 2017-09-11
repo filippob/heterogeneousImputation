@@ -91,7 +91,7 @@ echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
-$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
 $PLINKPATH --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
 
 echo "#######################################"
@@ -107,7 +107,7 @@ echo "## injecting artificial missing"
 echo "#######################################"
 ## STEP 1
 ## injecting artificial missing genotypes
-$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/injectMissing.R subset.ped $MISSING
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/injectMissing.R subset.ped $MISSING $MAINPATH
 cp subset.map artificialMissing.map # copy the map file to where the injected ped is created
 
 echo "#######################################"
@@ -137,7 +137,7 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt $( basename $INPUTFILE)
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt $( basename $INPUTFILE) $MAINPATH
 rm artificialMissing.ped artificialMissing.map originalRaw.raw imputedRaw.raw subset.ped subset.log subset.map freq.frq
 rm -r OUTPUT/
 

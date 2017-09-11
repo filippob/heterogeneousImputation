@@ -10,8 +10,6 @@ load("time.RData")
 library("plyr")
 library("data.table")
 
-# load functions to inject missing
-source("scripts/functions.R")
 
 ## read input from command line
 args = commandArgs(trailingOnly = TRUE)
@@ -20,17 +18,22 @@ print(paste("Original raw file: ",args[1],sep=" "))
 print(paste("Imputed raw file: ", args[2],sep=" "))
 print(paste("File with indexes: ", args[3],sep=" "))
 print(paste("experiment name: ", args[4],sep=" "))
+print(paste("main path to software: ", args[5],sep=" "))
 
 originalRaw_file = args[1]
 impRaw_file = args[2]
 idx_file = args[3]
 experiment = args[4]
+pathMain = args[5]
 
 # originalRaw_file = "/storage/share/jody/data/cowChr12.raw"
 # impRaw_file =  "/storage/share/jody/filippo/heterogeneousImputation/scripts/devR/imputed.raw"
 # idx_file = "/storage/share/jody/filippo/heterogeneousImputation/scripts/devR/imputed.raw"
 
 ###########################################################################################################
+
+# load functions to inject missing
+source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))
 
 ## read in the original data in .raw format
 originalRaw <- fread(originalRaw_file, header = TRUE)
