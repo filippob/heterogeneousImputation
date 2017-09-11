@@ -39,6 +39,7 @@ esac
 shift # past argument or value
 done
 
+
 echo "########################################################"
 echo "## WRAPPER BASH SCRIPT TO RUN THE IMPUTATION EXPERIMENTS"
 echo "########################################################"
@@ -52,6 +53,19 @@ if [[ -n $1 ]]; then
     echo "Last line of file specified as non-opt/last argument:"
     tail -1 $1
 fi
+
+### Hard-coded main paths
+echo "########################################################"
+echo "## HARD-CODED MAIN PATHS TO SOFTWARE                    "
+echo "########################################################"
+MAINPATH="/storage/share/jody/software" #path to R scripts and Zanardi/Beagle
+RPATH="/storage/biscarinif/R-3.1.1/bin/Rscript" #path to Rscript
+PLINKPATH="/storage/software/plink" #path to plink1.9
+
+echo "Main path to software is ${MAINPATH}"
+echo "Path to Rscript is ${RPATH}"
+echo "Path to Plink is ${PLINKPATH}"
+
 
 echo "#######################################"
 echo "## STEP -1"
@@ -77,14 +91,14 @@ echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
-/storage/software/plink --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
+$PLINKPATH --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
 
 echo "#######################################"
 echo "## STEP 0.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
-/storage/software/plink --cow --file subset --recode A --out originalRaw
+$PLINKPATH --cow --file subset --recode A --out originalRaw
 rm originalRaw.nosex originalRaw.log
 
 echo "#######################################"
@@ -93,7 +107,7 @@ echo "## injecting artificial missing"
 echo "#######################################"
 ## STEP 1
 ## injecting artificial missing genotypes
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/injectMissing.R subset.ped $MISSING
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/injectMissing.R subset.ped $MISSING
 cp subset.map artificialMissing.map # copy the map file to where the injected ped is created
 
 echo "#######################################"
@@ -102,10 +116,10 @@ echo "## imputation of missing genotypes"
 echo "#######################################"
 ## STEP 2
 ## Imputation of missing genotypes
-cp /storage/share/jody/software/Zanardi/PARAMFILE.txt .
+cp ${MAINPATH}/Zanardi/PARAMFILE.txt .
 #(/usr/bin/time --format "%e" python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4) > imputation_step.log 2> time_results
-python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
-/storage/software/plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
+python ${MAINPATH}/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
+$PLINKPATH --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
 rm imputedRaw.nosex imputedRaw.log
 
 echo "#######################################"
@@ -114,7 +128,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-/storage/software/plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
+$PLINKPATH --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
 rm freq.log freq.nosex
 
 echo "#######################################"
@@ -123,7 +137,7 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt $( basename $INPUTFILE)
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputedRaw.raw indexes.txt $( basename $INPUTFILE)
 rm artificialMissing.ped artificialMissing.map originalRaw.raw imputedRaw.raw subset.ped subset.log subset.map freq.frq
 rm -r OUTPUT/
 
