@@ -65,6 +65,17 @@ if [[ -n $1 ]]; then
     tail -1 $1
 fi
 
+
+### Hard-coded main paths
+echo "########################################################"
+echo "## MAIN PATHS TO SOFTWARE - FROM pathNames.txt         #"
+echo "########################################################"
+source heterogeneousImputation/pathNames.txt
+
+echo "Main path to software is ${MAINPATH}"
+echo "Path to Rscript is ${RPATH}"
+echo "Path to Plink is ${PLINKPATH}"
+
 echo "#######################################"
 echo "## STEP -1"
 echo "## create unique folders for each run"
