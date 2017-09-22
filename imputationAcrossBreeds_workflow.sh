@@ -70,7 +70,7 @@ fi
 echo "########################################################"
 echo "## MAIN PATHS TO SOFTWARE - FROM pathNames.txt         #"
 echo "########################################################"
-# source heterogeneousImputation/pathNames.txt ## --> moved to script .sh to run qith qsub
+source pathNames.txt ##
 
 echo "Main path to software is ${MAINPATH}"
 echo "Path to Rscript is ${RPATH}"
