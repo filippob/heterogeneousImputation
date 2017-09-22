@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# run as: bash imputationAcrossBreeds_Workflow.sh -f <plink_filename> -d <low_density_array> -n <sample_size> -b <breeds> -o <outdir>
+# run as: bash imputationAcrossBreeds_Workflow.sh -f <plink_filename> -d <low_density_array> -n <sample_size> -b <breeds> -s <species> -o <outdir>
 # <plink_filename>: Plink name without .ped/.map extension
 # <low_density_array>: list of SNP names from the desired low density SNP array 
 # <sample_size>: n. of individuals that will be sampled initially from the original file 
 # <breeds>: breed(s) that will be assigned the low density SNP array 
+# <species>: Plink species identifier (e.g. cow, sheep etc.)
 # <outdir> root output directory
 # Use -gt 1 to consume two arguments per pass in
 # the loop (e.g. each
@@ -34,6 +35,10 @@ case $key in
     BREEDS="$2"
     shift # past argument
     ;;
+    -s|--species)
+    SPECIES="$2"
+    shift
+    ;; 
     -o|--outdir)
     OUTDIR="$2"
     shift # past argument
@@ -85,7 +90,7 @@ echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
 /storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
-/storage/software/plink --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
+/storage/software/plink --${SPECIES} --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
 
 echo "#############################################"
 echo "## STEP 1                                    "
@@ -98,18 +103,18 @@ RASSEN=$(echo $BREEDS | sed 's/,/\\|/') #transforms comma-separated breed names 
 echo "RASSEN     = $RASSEN"
 cut -f1-2 -d' ' subset.ped | grep ${RASSEN} > keep.ids
 # create low-density and high-density subsets
-/storage/software/plink --cow --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
-/storage/software/plink --cow --file subset --remove keep.ids --recode --out subsetHD
+/storage/software/plink --${SPECIES} --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
+/storage/software/plink --${SPECIES} --file subset --remove keep.ids --recode --out subsetHD
 # put HD and LD subsets together into a combined file
-/storage/software/plink --cow --file subsetHD --merge subsetLD --recode --out combined
+/storage/software/plink --${SPECIES} --file subsetHD --merge subsetLD --recode --out combined
 rm subsetHD* subsetLD*
 
 echo "#######################################"
 echo "## STEP 1.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
-/storage/software/plink --cow --file subset --recode A --out originalRaw
-/storage/software/plink --cow --file combined --recode A --out combinedRaw
+/storage/software/plink --${SPECIES} --file subset --recode A --out originalRaw
+/storage/software/plink --${SPECIES} --file combined --recode A --out combinedRaw
 rm combinedRaw.nosex combinedRaw.log combined.bed combined.bim originalRaw.nosex originalRaw.log
 
 echo "#######################################"
@@ -122,7 +127,7 @@ date +%s > anfangZeit
 cp /storage/share/jody/software/Zanardi/PARAMFILE_DENSITY.txt PARAMFILE.txt
 #(/usr/bin/time --format "%e" python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4) > imputation_step.log 2> time_results
 python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
-/storage/software/plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
+/storage/software/plink --${SPECIES} --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
 rm imputedRaw.nosex imputedRaw.log
 
 echo "#######################################"
@@ -131,7 +136,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-/storage/software/plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
+/storage/software/plink --${SPECIES} --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
 rm freq.log freq.nosex
 
 echo "#######################################"
