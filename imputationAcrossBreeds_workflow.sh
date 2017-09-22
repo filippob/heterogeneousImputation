@@ -100,8 +100,8 @@ echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
-/storage/software/plink --${SPECIES} --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
+$PLINKPATH --${SPECIES} --file ${INPUTFILE} --keep keepIDs.txt --maf 0.01 --bp-space 1 --recode --out subset
 
 echo "#############################################"
 echo "## STEP 1                                    "
@@ -114,18 +114,18 @@ RASSEN=$(echo $BREEDS | sed 's/,/\\|/') #transforms comma-separated breed names 
 echo "RASSEN     = $RASSEN"
 cut -f1-2 -d' ' subset.ped | grep ${RASSEN} > keep.ids
 # create low-density and high-density subsets
-/storage/software/plink --${SPECIES} --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
-/storage/software/plink --${SPECIES} --file subset --remove keep.ids --recode --out subsetHD
+$PLINKPATH --${SPECIES} --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
+$PLINKPATH --${SPECIES} --file subset --remove keep.ids --recode --out subsetHD
 # put HD and LD subsets together into a combined file
-/storage/software/plink --${SPECIES} --file subsetHD --merge subsetLD --recode --out combined
+$PLINKPATH --${SPECIES} --file subsetHD --merge subsetLD --recode --out combined
 rm subsetHD* subsetLD*
 
 echo "#######################################"
 echo "## STEP 1.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
-/storage/software/plink --${SPECIES} --file subset --recode A --out originalRaw
-/storage/software/plink --${SPECIES} --file combined --recode A --out combinedRaw
+$PLINKPATH --${SPECIES} --file subset --recode A --out originalRaw
+$PLINKPATH --${SPECIES} --file combined --recode A --out combinedRaw
 rm combinedRaw.nosex combinedRaw.log combined.bed combined.bim originalRaw.nosex originalRaw.log
 
 echo "#######################################"
@@ -135,10 +135,10 @@ echo "#######################################"
 ## STEP 2
 ## Imputation of missing genotypes
 date +%s > anfangZeit
-cp /storage/share/jody/software/Zanardi/PARAMFILE_DENSITY.txt PARAMFILE.txt
+cp ${MAINPATH}/Zanardi/PARAMFILE_DENSITY.txt PARAMFILE.txt
 #(/usr/bin/time --format "%e" python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4) > imputation_step.log 2> time_results
-python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
-/storage/software/plink --${SPECIES} --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
+python ${MAINPATH}/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
+$PLINKPATH --${SPECIES} --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
 rm imputedRaw.nosex imputedRaw.log
 
 echo "#######################################"
@@ -147,7 +147,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-/storage/software/plink --${SPECIES} --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
+$PLINKPATH --${SPECIES} --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
 rm freq.log freq.nosex
 
 echo "#######################################"
@@ -156,7 +156,7 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputedRaw.raw $( basename $INPUTFILE) ${LDSIZE}
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputedRaw.raw $( basename $INPUTFILE) ${LDSIZE} $MAINPATH
 rm originalRaw.raw imputedRaw.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
 rm -r OUTPUT/
 
