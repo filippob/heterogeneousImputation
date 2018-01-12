@@ -3,7 +3,7 @@
 # run as: bash imputationWorkflow.sh -f <plink_filename> -p <proportion_missing> -n <sample_size> -o <outdir>
 # <plink_filename>: Plink name without .ped/.map extension
 # <proportion_missing>: proportion of markers 
-# <outdir> root output directory
+# <outdir> root output directory [must be an existing directory]
 # Use -gt 1 to consume two arguments per pass in
 # the loop (e.g. each
 # argument has a corresponding value to go with it).
@@ -58,7 +58,7 @@ fi
 echo "########################################################"
 echo "## MAIN PATHS TO SOFTWARE - FROM pathNames.txt         #"
 echo "########################################################"
-source heterogeneousImputation/pathNames.txt
+source pathNames.txt
 
 echo "Main path to software is ${MAINPATH}"
 echo "Path to Rscript is ${RPATH}"

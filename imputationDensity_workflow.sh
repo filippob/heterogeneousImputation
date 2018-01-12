@@ -60,6 +60,15 @@ if [[ -n $1 ]]; then
     tail -1 $1
 fi
 
+echo "################################################"
+echo "## MAIN PATHS TO SOFTWARE - from pathNames.txt #"
+echo "################################################"
+source pathNames.txt
+
+echo "Main path to software is $MAINPATH"
+echo "Path to Rscript is $RPATH"
+echo "Path to Plink is $PLINKPATH"
+
 echo "#######################################"
 echo "## STEP -1"
 echo "## create unique folders for each run"
@@ -84,8 +93,8 @@ echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
-/storage/software/plink --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE
+$PLINKPATH --cow --file ${INPUTFILE} --keep keepIDs.txt --recode --out subset
 
 echo "#######################################"
 echo "## STEP 1"
@@ -96,18 +105,18 @@ echo "#######################################"
 # randomly sample individuals to assign to the LD array
 cut -f1-2 -d' ' subset.ped | shuf -n $LDSIZE > keep.ids
 # create low-density and high-density subsets
-/storage/software/plink --cow --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
-/storage/software/plink --cow --file subset --remove keep.ids --recode --out subsetHD
+$PLINKPATH --cow --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
+$PLINKPATH --cow --file subset --remove keep.ids --recode --out subsetHD
 # put HD and LD subsets together into a combined file
-/storage/software/plink --cow --file subsetHD --merge subsetLD --recode --out combined
+$PLINKPATH --cow --file subsetHD --merge subsetLD --recode --out combined
 rm subsetHD* subsetLD*
 
 echo "#######################################"
 echo "## STEP 1.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
-/storage/software/plink --cow --file subset --recode A --out originalRaw
-/storage/software/plink --cow --file combined --recode A --out combinedRaw
+$PLINKPATH --cow --file subset --recode A --out originalRaw
+$PLINKPATH --cow --file combined --recode A --out combinedRaw
 rm combinedRaw.nosex combinedRaw.log combined.bed combined.bim originalRaw.nosex originalRaw.log
 
 echo "#######################################"
@@ -117,10 +126,10 @@ echo "#######################################"
 ## STEP 2
 ## Imputation of missing genotypes
 date +%s > anfangZeit
-cp /storage/share/jody/software/Zanardi/PARAMFILE_DENSITY.txt PARAMFILE.txt
+cp ${MAINPATH}/Zanardi/PARAMFILE_DENSITY.txt PARAMFILE.txt
 #(/usr/bin/time --format "%e" python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4) > imputation_step.log 2> time_results
-python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
-/storage/software/plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
+python ${MAINPATH}/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
+$PLINKPATH --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
 rm imputedRaw.nosex imputedRaw.log
 
 echo "#######################################"
@@ -129,7 +138,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-/storage/software/plink --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
+$PLINKPATH --cow --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
 rm freq.log freq.nosex
 
 echo "#######################################"
@@ -138,7 +147,7 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-/storage/biscarinif/R-3.1.1/bin/Rscript --vanilla /storage/share/jody/software/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputedRaw.raw $( basename $INPUTFILE) ${LDSIZE}
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputedRaw.raw $( basename $INPUTFILE) ${LDSIZE}
 rm originalRaw.raw imputedRaw.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
 rm -r OUTPUT/
 

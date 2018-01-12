@@ -21,12 +21,14 @@ print(paste("Combined (missing) raw file: ", args[2],sep=" "))
 print(paste("Imputed raw file: ", args[3],sep=" "))
 print(paste("experiment name: ", args[4],sep=" "))
 print(paste("N. of LD samples: ", args[5],sep=" "))
+print(paste("Name of low-density SNP file: ",args[6] ,sep=" "))
 
 originalRaw_file = args[1]
 combinedRaw_file = args[2]
 impRaw_file = args[3]
 experiment = args[4]
 ldSize = args[5]
+ldFile = args[6]
 
 # originalRaw_file = "/storage/share/jody/filippo/density/prova/DENSITYIMP_chr22.100_20_283948240.04-09-2017/originalRaw.raw"
 # combinedRaw_file = "/storage/share/jody/filippo/density/prova/DENSITYIMP_chr22.100_20_283948240.04-09-2017/combinedRaw.raw"
@@ -108,6 +110,7 @@ print("MAF read from freq.frq (Plink)")
 ergebnisse <- data.frame(
   "experiment_name"=experiment,
   "sample_size"=n,
+  "scaling_up"=paste(nrow(ldFile),"to",m,sep="_"),
   "proportion_missing"=proportionMissing,
   "avgMAF"=mean(freq$MAF,na.rm = TRUE),
   "nLD"=ldSize,
