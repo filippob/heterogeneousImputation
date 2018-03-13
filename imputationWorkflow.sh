@@ -3,7 +3,7 @@
 # run as: bash imputationWorkflow.sh -f <plink_filename> -p <proportion_missing> -n <sample_size> -o <outdir>
 # <plink_filename>: Plink name without .ped/.map extension
 # <proportion_missing>: proportion of markers 
-# <outdir> root output directory
+# <outdir> root output directory [must be an existing directory]
 # Use -gt 1 to consume two arguments per pass in
 # the loop (e.g. each
 # argument has a corresponding value to go with it).
@@ -88,9 +88,13 @@ cd $folderName
 echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
+echo "## NB: if sample size is small, it is  "
+echo "## safer to use a higher MAF filter    "
+echo "## (otherwise all minor alleles could  "
+echo "## be set to missing by chance no ALT) "
 echo "#######################################"
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
-$PLINKPATH --cow --file ${INPUTFILE} --keep keepIDs.txt --maf 0.01 --bp-space 1 --recode --out subset
+$PLINKPATH --cow --file ${INPUTFILE} --keep keepIDs.txt --maf 0.05 --bp-space 1 --recode --out subset
 
 echo "#######################################"
 echo "## STEP 0.5"
