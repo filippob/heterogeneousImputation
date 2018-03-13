@@ -66,7 +66,7 @@ echo "Path to Plink is ${PLINKPATH}"
 
 
 echo "#######################################"
-echo "## STEP -1"
+echo "## STEP -1 "
 echo "## create unique folders for each run"
 echo "#######################################"
 PREFIX="GAPIMP"
