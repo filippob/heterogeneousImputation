@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# run as: bash imputationWorkflow.sh -f <plink_filename> -d <low_density_array> -n <sample_size> -l <ld_size> -o <outdir>
+# run as: bash imputationDensity_Workflow.sh -f <plink_filename> -d <low_density_array> -n <sample_size> -l <ld_size> -o <outdir>
 # <plink_filename>: Plink name without .ped/.map extension
 # <low_density_array>: list of SNP names from the desired low density SNP array 
 # <sample_size>: n. of individuals that will be sampled initially from the original file 
