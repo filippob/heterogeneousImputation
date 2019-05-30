@@ -17,7 +17,7 @@ args = commandArgs(trailingOnly = TRUE)
 print(paste("Original raw file: ",args[1],sep=" "))
 print(paste("Combined (missing) raw file: ", args[2],sep=" "))
 print(paste("Imputed raw file: ", args[3],sep=" "))
-print(paste("experiment name: ", args[4],sep=" "))
+#print(paste("experiment name: ", args[4],sep=" "))
 print(paste("N. of LD samples: ", args[5],sep=" "))
 print(paste("Name of low-density SNP file: ",args[6] ,sep=" "))
 print(paste("Main path is: ", args[7], sep=" "))
@@ -25,10 +25,11 @@ print(paste("Main path is: ", args[7], sep=" "))
 originalRaw_file = args[1]
 combinedRaw_file = args[2]
 impRaw_file = args[3]
-experiment = args[4]
-ldSize = args[5]
-ldFile = args[6]
-pathMain = args[7]
+ldSize = args[4]
+ldFile = args[5]
+pathMain = args[6]
+
+experiment = paste(ldFile,ldSize,sep="_")
 
 # load functions to inject missing
 source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))

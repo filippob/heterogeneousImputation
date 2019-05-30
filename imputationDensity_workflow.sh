@@ -147,7 +147,7 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputedRaw.raw $( basename $INPUTFILE) ${LDSIZE} ${MAINPATH}
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputedRaw.raw ${LDSIZE} $( basename $INPUTFILE) ${MAINPATH}
 rm originalRaw.raw imputedRaw.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
 rm -r OUTPUT/
 
