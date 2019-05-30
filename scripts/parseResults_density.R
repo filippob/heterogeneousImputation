@@ -10,9 +10,6 @@ anfangZeit <- scan("anfangZeit")
 library("plyr")
 library("data.table")
 
-# load functions to inject missing
-source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))
-#source("/storage/share/jody/software/scripts/functions.R")
 
 ## read input from command line
 args = commandArgs(trailingOnly = TRUE)
@@ -32,6 +29,10 @@ experiment = args[4]
 ldSize = args[5]
 ldFile = args[6]
 pathMain = args[7]
+
+# load functions to inject missing
+source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))
+#source("/storage/share/jody/software/scripts/functions.R")
 
 # originalRaw_file = "/storage/share/jody/filippo/density/prova/DENSITYIMP_chr22.100_20_283948240.04-09-2017/originalRaw.raw"
 # combinedRaw_file = "/storage/share/jody/filippo/density/prova/DENSITYIMP_chr22.100_20_283948240.04-09-2017/combinedRaw.raw"
