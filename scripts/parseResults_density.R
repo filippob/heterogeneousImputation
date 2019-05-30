@@ -20,7 +20,7 @@ print(paste("Imputed raw file: ", args[3],sep=" "))
 #print(paste("experiment name: ", args[4],sep=" "))
 print(paste("N. of LD samples: ", args[5],sep=" "))
 print(paste("Name of low-density SNP file: ",args[6] ,sep=" "))
-print(paste("Main path is: ", args[7], sep=" "))
+print(paste("Main path is: ", args[6], sep=" "))
 
 originalRaw_file = args[1]
 combinedRaw_file = args[2]
