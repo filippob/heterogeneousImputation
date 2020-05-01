@@ -135,11 +135,11 @@ echo "#######################################"
 ## STEP 2
 ## Imputation of missing genotypes
 date +%s > anfangZeit
-cp ${MAINPATH}/Zanardi/PARAMFILE_DENSITY.txt PARAMFILE.txt
-#(/usr/bin/time --format "%e" python /storage/share/jody/software/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4) > imputation_step.log 2> time_results
-python ${MAINPATH}/Zanardi/Zanardi.py --param=PARAMFILE.txt --beagle4 > imputation_step.log
-$PLINKPATH --${SPECIES} --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --recode A --out imputedRaw
-rm imputedRaw.nosex imputedRaw.log
+$PLINKPATH --$SPECIES --file combined --recode vcf --out combined
+java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=combined.vcf out=imputed
+$PLINKPATH --$SPECIES --vcf imputed.vcf.gz --recode --out imputed
+$PLINKPATH --$SPECIES --file imputed --recode A --out imputed
+rm imputed.nosex imputed.log
 
 echo "#######################################"
 echo "## STEP 3"
@@ -147,7 +147,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-$PLINKPATH --${SPECIES} --file OUTPUT/BEAGLE_OUT_stsm_IMPUTED --freq --out freq 
+$PLINKPATH --${SPECIES} --file imputed --freq --out freq 
 rm freq.log freq.nosex
 
 echo "#######################################"
@@ -157,7 +157,7 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputedRaw.raw $( basename $INPUTFILE) ${BREEDS} $LOWDENSITY $MAINPATH
-rm originalRaw.raw imputedRaw.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
-rm -r OUTPUT/
+rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
+
 
 
