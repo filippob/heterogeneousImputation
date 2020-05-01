@@ -44,6 +44,13 @@ m <- ncol(originalRaw)
 
 print(paste(n,"samples and",m,"markers read from",originalRaw_file,sep=" "))
 
+## read the filtered data before injecting artificial missing
+## measure minimum MAF
+freq <- fread("subset.frq",header=TRUE)
+min_maf = min(freq$MAF)
+n_snp = nrow(freq)
+print(paste("minimum MAF before imputation",min_maf))
+
 ## read in the indexes
 idx <- read.table(idx_file, header = FALSE, colClasses = c("numeric"))
 idx <- idx$V1
@@ -101,6 +108,8 @@ print("MAF read from freq.frq (Plink)")
 ergebnisse <- data.frame(
   "experiment_name"=experiment,
   "sample_size"=n,
+  "n_SNP"=n_snp,
+  "maf_filter"=min_maf,
   "proportion_missing"=proportionMissing,
   "avgMAF"=mean(freq$MAF,na.rm = TRUE),
   "injectedMissing"=length(idx),

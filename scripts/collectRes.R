@@ -2,15 +2,16 @@
 ## Rscript --vanilla collectRes.R (no arguments)
 
 # parameters to modify
-res.folder = '/storage/share/jody/pilots'
+res.folder = './'
 outfile = 'collected_res.csv'
+prefix = 'GAPIMP'
 
 #first we move there
 print(paste("Looking for results in",res.folder,sep=" "))
 setwd(res.folder)
 
 #then we list all available result folders
-res.list = list.files(pattern='POPIMP_*')
+res.list = list.files(pattern=prefix)
 
 data = NULL
 for (res in res.list){
