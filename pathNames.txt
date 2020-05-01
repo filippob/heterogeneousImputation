@@ -1,3 +1,4 @@
-MAINPATH="/storage/share/jody/software" #path to R scripts and Zanardi/Beagle
-RPATH="/storage/biscarinif/R-3.1.1/bin/Rscript" #path to Rscript
-PLINKPATH="/storage/software/plink" #path to plink1.9
+MAINPATH="/home/filippo/Documents/jody/software" #path to R scripts and Zanardi/Beagle
+RPATH="/usr/bin/Rscript" #path to Rscript
+PLINKPATH="/home/filippo/Downloads/plink" #path to plink1.9
+BEAGLEPATH="/home/filippo/Documents/jody/software/beagle.24Mar20.5f5.jar"
