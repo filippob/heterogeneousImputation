@@ -18,8 +18,8 @@ print(paste("Original raw file: ",args[1],sep=" "))
 print(paste("Combined (missing) raw file: ", args[2],sep=" "))
 print(paste("Imputed raw file: ", args[3],sep=" "))
 #print(paste("experiment name: ", args[4],sep=" "))
-print(paste("N. of LD samples: ", args[5],sep=" "))
-print(paste("Name of low-density SNP file: ",args[6] ,sep=" "))
+print(paste("N. of LD samples: ", args[4],sep=" "))
+print(paste("Name of low-density SNP file: ",args[5] ,sep=" "))
 print(paste("Main path is: ", args[6], sep=" "))
 
 originalRaw_file = args[1]
@@ -64,6 +64,17 @@ impRaw <- impRaw[,7:ncol(impRaw), with=FALSE]
 
 originalRaw <- as.matrix(originalRaw)
 impRaw <- as.matrix(impRaw)
+
+## read the filtered data before injecting artificial missing
+## measure minimum MAF
+freq <- fread("subset.frq",header=TRUE)
+min_maf = min(freq$MAF)
+n_snp = nrow(freq)
+print(paste("minimum MAF before imputation",min_maf))
+
+## read the LD SNP array map
+ld_snp_array <- fread("subsetLD.map",header=FALSE)
+n_ld_snp = nrow(ld_snp_array)
 
 ## retrieve original and imputed genotypes (0/1/2)
 ## corresponding to missing values in the combinedRaw file (LD + HD datasets)
@@ -115,7 +126,10 @@ print("MAF read from freq.frq (Plink)")
 ergebnisse <- data.frame(
   "experiment_name"=experiment,
   "sample_size"=n,
-  "scaling_up"=paste(nrow(ldFile),"to",m,sep="_"),
+  "LD SNP n."=n_ld_snp,
+  "scaling_up to"=m,
+  "n_SNP"=n_snp,
+  "maf_filter"=min_maf,
   "proportion_missing"=proportionMissing,
   "avgMAF"=mean(freq$MAF,na.rm = TRUE),
   "nLD"=ldSize,
