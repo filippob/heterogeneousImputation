@@ -25,7 +25,7 @@ source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))
 
 ## A check for the progress of the script
 print("Reading in the ped file ...")
-ped <- fread(pedFile, header = FALSE, colClasses = c("character"), na.strings = c("0"))
+ped <- fread(pedFile, header = FALSE, colClasses = c("character")) #na.strings = c("0"))
 
 n <- nrow(ped)
 m <- (ncol(ped)-6)/2
