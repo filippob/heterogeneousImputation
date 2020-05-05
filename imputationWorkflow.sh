@@ -106,6 +106,7 @@ echo "## safer to use a higher MAF filter    "
 echo "## (otherwise all minor alleles could  "
 echo "## be set to missing by chance no ALT) "
 echo "#######################################"
+$PLINKPATH --$SPECIES --file $INPUTFILE --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
 $PLINKPATH "--$SPECIES" --file ${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --recode --out subset
 
@@ -151,7 +152,5 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputed.raw indexes.txt $( basename $INPUTFILE) $MAINPATH
-rm artificialMissing.ped artificialMissing.map originalRaw.raw imputed.raw *.vcf imputed.ped imputed.map *.gz subset.ped subset.log subset.map subset.frq freq.frq *.nosex originalRaw.log freq.log
-
-
+#rm artificialMissing.ped artificialMissing.map originalRaw.raw imputed.raw *.vcf imputed.ped imputed.map *.gz subset.ped subset.log subset.map subset.frq freq.frq *.nosex originalRaw.log freq.log transposed.*
 

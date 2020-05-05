@@ -5,6 +5,7 @@
 #ped <- read.table("/storage/share/jody/data/cowSubset.ped", colClasses = c("character"), header = FALSE)
 
 library("plyr")
+library("data.table")
 
 args = commandArgs(trailingOnly = TRUE)
 
@@ -24,10 +25,10 @@ ncols <-as.numeric(unlist(strsplit(trim(system2("head",paste("-1", pedFile,  "| 
 
 #read first two columns from ped file
 print("Reading in the first two columns of the ped file ...")# get n. of samples
-ped <- read.table(pedFile, header = FALSE, colClasses = c(rep("character",2),rep("NULL",(ncols-2))))
+ped <- fread("transposed.tfam", header = FALSE, select = c(1,2))
 
 n <- nrow(ped)
-print(paste(n,"rows read from",pedFile,sep=" "))
+print(paste(n,"rows read from transposed",pedFile,sep=" "))
 
 # dd <- ddply(ped,"V1",nrow)/n
 # round(dd*sampleSize,0)

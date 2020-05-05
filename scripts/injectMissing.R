@@ -1,6 +1,5 @@
 library("data.table")
 
-
 ## Reading the .ped file in from the shared server folder 
 ##Ensure that R knows that the SNP calls are characters, otherwise will read T as TRUE etc
 ## run as: Rscript --vanilla injectMissing.R <pedfile> <proportionMissing>
@@ -25,7 +24,7 @@ source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))
 
 ## A check for the progress of the script
 print("Reading in the ped file ...")
-ped <- fread(pedFile, header = FALSE)
+ped <- fread(pedFile, header = FALSE, colClasses = "character")
 
 n <- nrow(ped)
 m <- (ncol(ped)-6)/2
@@ -56,5 +55,3 @@ write.table(idx, file = "indexes.txt", quote = FALSE, na = "0", row.names = FALS
 start.time <- Sys.time()
 save(start.time,file="time.RData")
 print("DONE!!")
-
-
