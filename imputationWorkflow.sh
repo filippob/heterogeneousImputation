@@ -84,6 +84,11 @@ echo "## create unique folders for each run"
 echo "#######################################"
 PREFIX="GAPIMP"
 tmstmp=$(date +%N)
+## fix for MAC OS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  tmstmp=$(date +%s)
+fi
+
 currDate=$(date +%d-%m-%Y)
 folderName=${PREFIX}_$( basename $INPUTFILE).${SAMPLESIZE}_${MISSING}_${tmstmp}.${currDate}
 
@@ -152,5 +157,5 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputed.raw indexes.txt $( basename $INPUTFILE) $MAINPATH
-rm artificialMissing.ped artificialMissing.map originalRaw.raw imputed.raw *.vcf imputed.ped imputed.map *.gz subset.ped subset.log subset.map subset.frq freq.frq *.nosex originalRaw.log freq.log transposed.*
+rm artificialMissing.ped artificialMissing.map originalRaw.raw imputed.raw *.vcf imputed.ped imputed.map *.gz subset.ped subset.log subset.map *.frq *.nosex originalRaw.log freq.log transposed.*
 
