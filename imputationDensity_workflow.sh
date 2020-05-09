@@ -87,7 +87,7 @@ echo "## STEP -1"
 echo "## create unique folders for each run"
 echo "#######################################"
 PREFIX="DENSITYIMP"
-tmstmp=$(date +%N)
+tmstmp=$(date +%s)
 currDate=$(date +%d-%m-%Y)
 folderName=${PREFIX}_$( basename $INPUTFILE).${SAMPLESIZE}_$( basename $LDSIZE)_${tmstmp}.${currDate}
 

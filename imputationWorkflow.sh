@@ -83,11 +83,14 @@ echo "## STEP -1 "
 echo "## create unique folders for each run"
 echo "#######################################"
 PREFIX="GAPIMP"
-tmstmp=$(date +%N)
+
+#tmstmp=$(date +%N)
 ## fix for MAC OS
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  tmstmp=$(date +%s)
-fi
+#if [[ "$OSTYPE" == "darwin"* ]]; then
+#  tmstmp=$(date +%s)
+#fi
+
+tmstmp=$(date +%s)
 
 currDate=$(date +%d-%m-%Y)
 folderName=${PREFIX}_$( basename $INPUTFILE).${SAMPLESIZE}_${MISSING}_${tmstmp}.${currDate}
