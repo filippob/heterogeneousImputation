@@ -106,6 +106,7 @@ echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
+$PLINKPATH --$SPECIES --file ${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
 $PLINKPATH --$SPECIES --file ${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --recode --out subset
 $PLINKPATH --$SPECIES --file subset --freq --out subset
@@ -163,5 +164,5 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputed.raw ${LDSIZE} $( basename $INPUTFILE) ${MAINPATH}
-rm originalRaw.raw imputed.raw imputed.map imputed.ped combinedRaw.raw freq.frq combined.* subset.* subsetLD.*
+rm originalRaw.raw imputed.raw imputed.map imputed.ped combinedRaw.raw freq.frq combined.* subset.* subsetLD.* transposed.*
 
