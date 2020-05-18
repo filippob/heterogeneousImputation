@@ -118,7 +118,12 @@ echo "#######################################"
 ## STEP 1
 ## Prepare file with HD and LD (missing values) SNP genotypes
 # randomly sample individuals to assign to the LD array
-cut -f1-2 -d' ' subset.ped | shuf -n $LDSIZE > keep.ids
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  cut -f1-2 -d' ' subset.ped | gshuf -n $LDSIZE > keep.ids
+else
+  cut -f1-2 -d' ' subset.ped | shuf -n $LDSIZE > keep.ids
+fi
+
 # create low-density and high-density subsets
 $PLINKPATH --$SPECIES --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
 $PLINKPATH --$SPECIES --file subset --remove keep.ids --recode --out subsetHD
