@@ -14,6 +14,36 @@
 # some arguments don't have a corresponding value to go with it such
 # as in the --default example).
 
+Help()
+{
+   # Display Help
+   echo "This script runs the pipeline to measure the imputation accuracy from one breed to the other.\n"
+   echo "Samples from one or more breeds are assigned to the LD SNP array and imputed based on complete\n"
+   echo "records from the other breed(s)"
+   echo "Paths to required software packages (e.g. R, Plink, Java, Beagle) are to be set in the file pathNames.txt"
+   echo
+   echo "Syntax: imputationAcrossBreeds_Workflow.sh [-h|f|s|d|n|b|o]"
+   echo "options:"
+   echo "h     print this help"
+   echo "f     Plink filename (path to) [required]"
+   echo "s     species [required]"
+   echo "d     low density array (list of SNP names) [required]"
+   echo "n     sample size (to be sampled randomly from the dataset) [required]"
+   echo "b     breed(s) assigned to the low density SNP array [required]"
+   echo "o     output directory [required]"
+   echo
+}
+
+# Get the options
+while getopts ":h" option; do
+   case $option in
+      h) # display Help
+         Help
+         exit;;
+   esac
+done
+
+
 while [[ $# -gt 1 ]]
 do
 key="$1"

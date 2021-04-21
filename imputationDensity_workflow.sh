@@ -29,7 +29,7 @@ Help()
    echo "d     low density array (list of SNP names) [required]"
    echo "n     sample size (to be sampled randomly from the dataset) [required]"
    echo "m     MAF threshold to filter data [required]"
-   echo "l     n. of samples assigned to the low density SNP array"
+   echo "l     n. of samples assigned to the low density SNP array [required]"
    echo "o     output directory [required]"
    echo
 }
