@@ -14,6 +14,33 @@
 # some arguments don't have a corresponding value to go with it such
 # as in the --default example).
 
+Help()
+{
+   # Display Help
+   echo "This script runs the pipeline to measure the within-dataset imputation accuracy (residual missing values)."
+   echo
+   echo "Syntax: imputationWorkflow.sh [-h|f|s|p|n|m|o]"
+   echo "options:"
+   echo "h     print this help"
+   echo "f     Plink filename (path to) [required]"
+   echo "s     species [required]"
+   echo "p     proportion of missing values to inject [required]"
+   echo "n     sample size (to be sampled randomly from the dataset) [required]"
+   echo "m     MAF threshold to filter data [required]"
+   echo "o     output directory [required]"
+   echo
+}
+
+# Get the options
+while getopts ":h" option; do
+   case $option in
+      h) # display Help
+         Help
+         exit;;
+   esac
+done
+
+
 while [[ $# -gt 1 ]]
 do
 key="$1"
