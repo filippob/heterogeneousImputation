@@ -17,7 +17,8 @@
 Help()
 {
    # Display Help
-   echo "This script runs the pipeline to measure the within-dataset imputation accuracy (residual missing values)."
+   echo "This script runs the pipeline to measure the within-dataset imputation accuracy (residual missing values).\n"
+   echo "Paths to required software packages (e.g. R, Plink, Java, Beagle) are to be set in the file pathNames.txt"
    echo
    echo "Syntax: imputationWorkflow.sh [-h|f|s|p|n|m|o]"
    echo "options:"
