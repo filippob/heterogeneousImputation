@@ -14,6 +14,13 @@
 # some arguments don't have a corresponding value to go with it such
 # as in the --default example).
 
+#######################
+## PARAMETERS
+#######################
+GENO=0.25 ## safety threshold to remove loci with excess "natural" missing values
+MIND=0.25 ## safety threshold to remove samples with excess "natural" missing values
+
+
 Help()
 {
    # Display Help
@@ -144,7 +151,7 @@ echo "## be set to missing by chance no ALT) "
 echo "#######################################"
 $PLINKPATH --$SPECIES --bfile $INPUTFILE --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
-$PLINKPATH "--$SPECIES" --bfile ${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --snps-only 'just-acgt' --not-chr 0 --recode --out subset
+$PLINKPATH "--$SPECIES" --bfile ${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --snps-only 'just-acgt' --not-chr 0 --geno $GENO --mind $MIND --recode --out subset
 
 echo "#######################################"
 echo "## STEP 0.5"
