@@ -1,5 +1,5 @@
 # heterogeneousImputation
-### Imputation experiments on multi-breed cattle and sheep data
+### Imputation experiments on multi-breed/accession/variety plant and animal populations
 
 The objective is to assess the effect of **population structure** on the **accuracy of imputing missing SNP genotypes**.
 Data from commercial SNP-arrays used to genotype multiple cattle and sheep breeds are available.
