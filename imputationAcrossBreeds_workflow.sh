@@ -155,6 +155,7 @@ echo "#######################################"
 echo "## STEP 1.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
+$PLINKPATH --${SPECIES} --file subset --freq --out subset
 $PLINKPATH --${SPECIES} --file subset --recode A --out originalRaw
 $PLINKPATH --${SPECIES} --file combined --recode A --out combinedRaw
 rm combinedRaw.nosex combinedRaw.log combined.bed combined.bim originalRaw.nosex originalRaw.log
