@@ -1,7 +1,6 @@
 ## Reading the .ped file in from the shared server folder 
-##Ensure that R knows that the SNP calls are characters, otherwise will read T as TRUE etc
-## run as: Rscript --vanilla parseResults.R <original_ped.raw> <imputed_ped.raw> <indexes> <experiment_name>
-#ped <- read.table("/storage/share/jody/data/cowSubset.ped", colClasses = c("character"), header = FALSE)
+## Ensure that R knows that the SNP calls are characters, otherwise will read T as TRUE etc
+## run as: Rscript --vanilla parseResults_across.R <original_ped.raw> <combined_ped.raw> <imputed_ped.raw> <experiment_name> <breeds> <ld_snpa_array> <mainpath>
 
 end.time <- Sys.time()
 anfangZeit <- scan("anfangZeit")
@@ -132,7 +131,6 @@ ergebnisse <- data.frame(
   "maf_filter"=min_maf,
   "proportion_missing"=proportionMissing,
   "avgMAF"=mean(freq$MAF,na.rm = TRUE),
-  "ld_breed"=ldBreed,
   "totalAccuracy"=totalAccuracy,
   "accuracyAA"=D[D$originalGenotypes==0,"V1"],
   "accuracyAB"=D[D$originalGenotypes==1,"V1"],

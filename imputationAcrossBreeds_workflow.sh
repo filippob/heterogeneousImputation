@@ -143,12 +143,19 @@ $PLINKPATH --$SPECIES --file ${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
 $PLINKPATH --${SPECIES} --file ${INPUTFILE} --keep keepIDs.txt --maf 0.01 --bp-space 1 --recode --out subset
 
+
 echo "#############################################"
 echo "## STEP 1                                    "
 echo "## sample individuals for the HD and LD array"
 echo "#############################################"
 ## STEP 1
 ## Prepare file with HD and LD (missing values) SNP genotypes
+
+if [ ! -f "subset.ped" ]; then
+	echo "file subset.ped/map does not exist"
+	exit
+fi
+
 # get breed IDs to be assigned the LD array
 RASSEN=$(echo $BREEDS | sed 's/,/\\|/') #transforms comma-separated breed names into a regular expression for grep
 echo "RASSEN     = $RASSEN"
@@ -198,7 +205,7 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_across.R originalRaw.raw combinedRaw.raw imputed.raw $( basename $INPUTFILE) ${BREEDS} $LOWDENSITY $MAINPATH
-# rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
+rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
 
 
 
