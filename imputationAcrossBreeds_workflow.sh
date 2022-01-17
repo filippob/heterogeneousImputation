@@ -124,12 +124,21 @@ exit
 fi
 
 mkdir $folderName
+folderpath=`realpath $folderName`
+echo "The following folder has just been created: $folderpath" 
+
 cd $folderName
 
 echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
+
+if [ ! -f "${INPUTFILE}.map" ]; then
+    echo "${INPUTFILE}.map does not exist"
+    exit
+fi
+
 $PLINKPATH --$SPECIES --file ${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
 $PLINKPATH --${SPECIES} --file ${INPUTFILE} --keep keepIDs.txt --maf 0.01 --bp-space 1 --recode --out subset
@@ -149,7 +158,7 @@ $PLINKPATH --${SPECIES} --file subset --keep keep.ids --extract ${LOWDENSITY} --
 $PLINKPATH --${SPECIES} --file subset --remove keep.ids --recode --out subsetHD
 # put HD and LD subsets together into a combined file
 $PLINKPATH --${SPECIES} --file subsetHD --merge subsetLD --recode --out combined
-rm subsetHD* subsetLD*
+rm subsetHD* subsetLD.ped
 
 echo "#######################################"
 echo "## STEP 1.5"
@@ -188,8 +197,8 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputedRaw.raw $( basename $INPUTFILE) ${BREEDS} $LOWDENSITY $MAINPATH
-rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_across.R originalRaw.raw combinedRaw.raw imputed.raw $( basename $INPUTFILE) ${BREEDS} $LOWDENSITY $MAINPATH
+# rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
 
 
 
