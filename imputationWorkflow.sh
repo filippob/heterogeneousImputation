@@ -179,10 +179,10 @@ echo "## imputation of missing genotypes"
 echo "#######################################"
 ## STEP 2
 ## Imputation of missing genotypes
-$PLINKPATH --$SPECIES --file artificialMissing --recode vcf --out artificialMissing
+$PLINKPATH --$SPECIES --allow-extra-chr --file artificialMissing --recode vcf --out artificialMissing
 java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=artificialMissing.vcf out=imputed
-$PLINKPATH --$SPECIES --vcf imputed.vcf.gz --recode --out imputed
-$PLINKPATH --$SPECIES --file imputed --recode A --out imputed
+$PLINKPATH --$SPECIES --allow-extra-chr --vcf imputed.vcf.gz --recode --out imputed
+$PLINKPATH --$SPECIES --allow-extra-chr --file imputed --recode A --out imputed
 
 echo "#######################################"
 echo "## STEP 3"
@@ -190,7 +190,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-$PLINKPATH --$SPECIES --file imputed --freq --out freq 
+$PLINKPATH --$SPECIES --allow-extra-chr --file imputed --freq --out freq 
 
 echo "#######################################"
 echo "## STEP 4"
