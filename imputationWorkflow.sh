@@ -19,7 +19,7 @@
 #######################
 GENO=0.50 ## safety threshold to remove loci with excess "natural" missing values
 MIND=0.50 ## safety threshold to remove samples with excess "natural" missing values
-
+MAF=0.001 ## safety MAF threshold to avoid monomorphic before imputation (e.g. A/- loci for which no alternative allele to impute is present)
 
 Help()
 {
@@ -152,8 +152,8 @@ echo "## (otherwise all minor alleles could  "
 echo "## be set to missing by chance no ALT) "
 echo "#######################################"
 $PLINKPATH --$SPECIES --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --recode transpose --out transposed
-$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
-$PLINKPATH "--$SPECIES" --allow-extra-chr --bfile ${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --snps-only 'just-acgt' --not-chr 0 --geno $GENO --mind $MIND --recode --out subset
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${MAINPATH}/${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
+$PLINKPATH "--$SPECIES" --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --snps-only 'just-acgt' --not-chr 0 --geno $GENO --mind $MIND --recode --out subset
 
 echo "#######################################"
 echo "## STEP 0.5"
