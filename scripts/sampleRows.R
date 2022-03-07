@@ -4,7 +4,7 @@
 ## run as: Rscript --vanilla sampleRows.R <pedfile> <sampleSize>
 #ped <- read.table("/storage/share/jody/data/cowSubset.ped", colClasses = c("character"), header = FALSE)
 
-library("plyr")
+library("tidyverse")
 library("data.table")
 
 args = commandArgs(trailingOnly = TRUE)
@@ -15,30 +15,22 @@ print(paste("arg3: ",args[3], sep=" "))
 
 pedFile = args[1]
 sampleSize = as.numeric(args[2])
-pathMain = args[3];
+pathMain = args[3]
 
 # load functions to inject missing
 source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))
 
-#get n. of columns
-ncols <-as.numeric(unlist(strsplit(trim(system2("head",paste("-1", pedFile,  "| wc", sep=" "), stdout = TRUE)),split = "\\s+"))[2])
-
 #read first two columns from ped file
 print("Reading in the first two columns of the ped file ...")# get n. of samples
-ped <- fread("transposed.tfam", header = FALSE, select = c(1,2))
+tfam <- fread("transposed.tfam", header = FALSE, select = c(1,2))
 
-n <- nrow(ped)
-print(paste(n,"rows read from transposed",pedFile,sep=" "))
+n <- nrow(tfam)
+print(paste(n,"rows read from transposed", pedFile,sep=" "))
 
-# dd <- ddply(ped,"V1",nrow)/n
-# round(dd*sampleSize,0)
-
+## generate a keep file for Plink: two columns, Family ID and Sample ID 
 print("Sampling rows ...")
-keepID <- ddply(ped,"V1",function(x,n=nrow(ped),s=sampleSize) {
-  
-  ns <- round((nrow(x)/n)*s) #n. of individuals to be sampled in each group
-  return(x[sample(nrow(x),ns),])
-})
+vec <- sample(n,sampleSize)
+keepID <- tfam[vec,]
 
 print("Writing out sampled rows ...")
 write.table(keepID,file="keepIDs.txt",quote = FALSE, col.names = FALSE, row.names = FALSE)
