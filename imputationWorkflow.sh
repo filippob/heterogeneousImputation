@@ -17,8 +17,8 @@
 #######################
 ## PARAMETERS
 #######################
-GENO=0.25 ## safety threshold to remove loci with excess "natural" missing values
-MIND=0.25 ## safety threshold to remove samples with excess "natural" missing values
+GENO=0.50 ## safety threshold to remove loci with excess "natural" missing values
+MIND=0.50 ## safety threshold to remove samples with excess "natural" missing values
 
 
 Help()
@@ -106,7 +106,9 @@ fi
 echo "########################################################"
 echo "## MAIN PATHS TO SOFTWARE - FROM pathNames.txt         #"
 echo "########################################################"
-source pathNames.txt
+cwd=`pwd`
+echo "current directory is $cwd"
+source heterogeneousImputation/pathNames.txt
 
 echo "Main path to software is ${MAINPATH}"
 echo "Path to Rscript is ${RPATH}"
@@ -149,9 +151,9 @@ echo "## safer to use a higher MAF filter    "
 echo "## (otherwise all minor alleles could  "
 echo "## be set to missing by chance no ALT) "
 echo "#######################################"
-$PLINKPATH --$SPECIES --bfile $INPUTFILE --recode transpose --out transposed
+$PLINKPATH --$SPECIES --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
-$PLINKPATH "--$SPECIES" --bfile ${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --snps-only 'just-acgt' --not-chr 0 --geno $GENO --mind $MIND --recode --out subset
+$PLINKPATH "--$SPECIES" --allow-extra-chr --bfile ${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --snps-only 'just-acgt' --not-chr 0 --geno $GENO --mind $MIND --recode --out subset
 
 echo "#######################################"
 echo "## STEP 0.5"
