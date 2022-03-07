@@ -150,6 +150,8 @@ echo "## NB: if sample size is small, it is  "
 echo "## safer to use a higher MAF filter    "
 echo "## (otherwise all minor alleles could  "
 echo "## be set to missing by chance no ALT) "
+echo "## N.B. subssampling is done without   "
+echo "## stratifying by subpopulation(if any)"
 echo "#######################################"
 $PLINKPATH --$SPECIES --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${MAINPATH}/${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
@@ -159,8 +161,8 @@ echo "#######################################"
 echo "## STEP 0.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
-$PLINKPATH --$SPECIES --file subset --freq --out subset
-$PLINKPATH --$SPECIES --file subset --recode A --out originalRaw
+$PLINKPATH --$SPECIES --allow-extra-chr --file subset --freq --out subset
+$PLINKPATH --$SPECIES --allow-extra-chr --file subset --recode A --out originalRaw
 
 echo "#######################################"
 echo "## STEP 1"
