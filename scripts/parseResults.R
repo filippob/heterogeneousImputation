@@ -47,7 +47,7 @@ print(paste(n,"samples and",m,"markers read from",originalRaw_file,sep=" "))
 ## read the filtered data before injecting artificial missing
 ## measure minimum MAF
 freq <- fread("subset.frq",header=TRUE)
-min_maf = min(freq$MAF)
+min_maf = min(freq$MAF, na.rm=TRUE)
 n_snp = nrow(freq)
 print(paste("minimum MAF before imputation",min_maf))
 
