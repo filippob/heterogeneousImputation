@@ -29,8 +29,21 @@ print(paste(n,"rows read from transposed", pedFile,sep=" "))
 
 ## generate a keep file for Plink: two columns, Family ID and Sample ID 
 print("Sampling rows ...")
-vec <- sample(n,sampleSize)
-keepID <- tfam[vec,]
+
+## tfam: V1 = family ID; V2 = sample ID
+pops = tfam$V1
+uniq_pops = unique(pops)
+if (length(pops) == length(uniq_pops) | length(uniq_pops) == 1 ) { ## check if there are subpopulations 
+  
+  vec <- sample(n,sampleSize)
+  keepID <- tfam[vec,]
+} else {
+  
+  npops = length(uniq_pops)
+  ninds = round(sampleSize/npops,0)
+  groupby(tfam, V1) %>% sample_n(ninds)
+}
+
 
 print("Writing out sampled rows ...")
 write.table(keepID,file="keepIDs.txt",quote = FALSE, col.names = FALSE, row.names = FALSE)
