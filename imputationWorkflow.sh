@@ -1,41 +1,28 @@
 #!/bin/bash
 
-# run as: bash imputationWorkflow.sh -f <plink_filename> -s <species> -p <proportion_missing> -n <sample_size> -m <maf> -o <outdir>
+# run as: bash imputationWorkflow.sh -f <plink_filename> -s <species> -p <proportion_missing> -n <sample_size> -o <outdir> -c <config>
 # <plink_filename>: Plink name without .ped/.map extension
 # <proportion_missing>: proportion of markers
 # <species> species identifier to be used in Plink
 # <sample_size> n of individuals to be sampled randomly from the ped file
-# <maf> minimum MAF to filter data (imputation from ped/map files does not work with monomorphic sites (no info on the alternative allele) 
 # <outdir> root output directory [must be an existing directory]
-# Use -gt 1 to consume two arguments per pass in
-# the loop (e.g. each
-# argument has a corresponding value to go with it).
-# Use -gt 0 to consume one or more arguments per pass in the loop (e.g.
-# some arguments don't have a corresponding value to go with it such
-# as in the --default example).
-
-#######################
-## PARAMETERS
-#######################
-GENO=0.50 ## safety threshold to remove loci with excess "natural" missing values
-MIND=0.50 ## safety threshold to remove samples with excess "natural" missing values
-MAF=0.001 ## safety MAF threshold to avoid monomorphic before imputation (e.g. A/- loci for which no alternative allele to impute is present)
+# <config> path to config file with parameters
 
 Help()
 {
    # Display Help
-   echo "This script runs the pipeline to measure the within-dataset imputation accuracy (residual missing values).\n"
-   echo "Paths to required software packages (e.g. R, Plink, Java, Beagle) are to be set in the file pathNames.txt"
+   echo "This script runs the pipeline to measure the within-dataset imputation accuracy (residual missing values)."
+   echo "Parameters (e.g. to software packages like R, Plink, Java, Beagle) are to be set in the config file (default: pathNames.txt)"
    echo
-   echo "Syntax: imputationWorkflow.sh [-h|f|s|p|n|m|o]"
+   echo "Syntax: imputationWorkflow.sh [-h|f|s|p|n||o|c]"
    echo "options:"
    echo "h     print this help"
    echo "f     Plink filename (path to) [required]"
    echo "s     species [required]"
    echo "p     proportion of missing values to inject [required]"
    echo "n     sample size (to be sampled randomly from the dataset) [required]"
-   echo "m     MAF threshold to filter data [required]"
    echo "o     output directory [required]"
+   echo "c     path to config file [if not provided, default is used]"
    echo
 }
 
@@ -70,16 +57,15 @@ case $key in
     SAMPLESIZE="$2"
     shift # past argument
     ;;
-    -m|--maf)
-    MAF="$2"
-    shift
-    ;;
     -o|--outdir)
     OUTDIR="$2"
     shift # past argument
     ;;
+    -c|--config)
+    CONFIG="$2"
+    shift
+    ;;
     *)
-            # unknown option
     ;;
 esac
 shift # past argument or value
@@ -94,32 +80,46 @@ echo INPUT FILE  = "${INPUTFILE}"
 echo SPECIES  = "${SPECIES}"
 echo PROPORTION OF MISSING     = "${MISSING}"
 echo SAMPLE SIZE     = "${SAMPLESIZE}"
-echo MAF THRESHOLD     = "${MAF}"
 echo OUT FOLDER     = "${OUTDIR}"
+configFile="${CONFIG:-pathNames.txt}"
+echo CONFIG FILE = "${configFile}"
 
 if [[ -n $1 ]]; then
     echo "Last line of file specified as non-opt/last argument:"
     tail -1 $1
 fi
 
-### Hard-coded main paths
+cwd=`pwd`
+echo "current directory is $cwd"
+source $configFile
+
+### Parameters from the config file
+echo "#######################"
+echo "## EXPERIMENT         #"
+echo "#######################"
+
+echo "Experiment type: ${PREFIX}"
+
 echo "########################################################"
 echo "## MAIN PATHS TO SOFTWARE - FROM pathNames.txt         #"
 echo "########################################################"
-cwd=`pwd`
-echo "current directory is $cwd"
-source heterogeneousImputation/pathNames.txt
 
 echo "Main path to software is ${MAINPATH}"
 echo "Path to Rscript is ${RPATH}"
 echo "Path to Plink is ${PLINKPATH}"
-echo "Path to Bagle is ${BEAGLEPATH}"
+
+echo "#################################################"
+echo "## GENOTYPE FILTERING THRESHOLDS               ##"
+echo "#################################################"
+
+echo "MAF threshold (to remove unimputable monomorphic loci): $MAF"
+echo "MIND threshold (to remove samples with excess missing data): $MIND"
+echo "GENO threshold (to remove loci with excess missing data): $GENO"
 
 echo "#######################################"
 echo "## STEP -1 "
 echo "## create unique folders for each run"
 echo "#######################################"
-PREFIX="GAPIMP"
 
 #tmstmp=$(date +%N)
 ## fix for MAC OS
@@ -199,5 +199,5 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults.R originalRaw.raw imputed.raw indexes.txt $( basename $INPUTFILE) $MAINPATH
-rm artificialMissing.ped artificialMissing.map originalRaw.raw imputed.raw *.vcf imputed.ped imputed.map *.gz subset.ped subset.log subset.map *.frq *.nosex originalRaw.log freq.log transposed.*
+#rm artificialMissing.ped artificialMissing.map originalRaw.raw imputed.raw *.vcf imputed.ped imputed.map *.gz subset.ped subset.log subset.map *.frq *.hh *.nosex originalRaw.log freq.log transposed.*
 
