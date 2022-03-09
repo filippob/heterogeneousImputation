@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# run as: bash imputationDensity_Workflow.sh -f <plink_filename> -s <species> -d <low_density_array> -n <sample_size> -m <maf> -l <ld_size> -o <outdir>
+# run as: bash imputationDensity_Workflow.sh -f <plink_filename> -s <species> -d <low_density_array> -n <sample_size> -l <ld_size> -o <outdir> -c <config>
 # <plink_filename>: Plink name without .ped/.map extension
 # <species> species identifier to be used in Plink
 # <low_density_array>: list of SNP names from the desired low density SNP array 
-# <sample_size>: n. of individuals that will be sampled initially from the original file 
+# <sample_size>: n. of individuals that will be sampled initialliy from the original file 
 # <ld_size>: n. of individuals that will be assigned the low density SNP array 
-# <maf> minimum MAF to filter data (imputation from ped/map files does not work with monomorphic sites (no info on the alternative allele) 
 # <outdir> root output directory
+# <config> path to config file with parameters
 # Use -gt 1 to consume two arguments per pass in
 # the loop (e.g. each
 # argument has a corresponding value to go with it).
@@ -21,16 +21,16 @@ Help()
    echo "This script runs the pipeline to measure the imputation accuracy from low to high density SNP arrays"
    echo "Paths to required software packages (e.g. R, Plink, Java, Beagle) are to be set in the file pathNames.txt"
    echo
-   echo "Syntax: imputationDensity_Workflow.sh [-h|f|s|d|n|m|l|o]"
+   echo "Syntax: imputationDensity_Workflow.sh [-h|f|s|d|n|l|o|c]"
    echo "options:"
    echo "h     print this help"
    echo "f     Plink filename (path to) [required]"
    echo "s     species [required]"
    echo "d     low density array (list of SNP names) [required]"
    echo "n     sample size (to be sampled randomly from the dataset) [required]"
-   echo "m     MAF threshold to filter data [required]"
    echo "l     n. of samples assigned to the low density SNP array [required]"
    echo "o     output directory [required]"
+   echo "c     path to config file [if not provided, default is used]"
    echo
 }
 
@@ -64,10 +64,6 @@ case $key in
     SAMPLESIZE="$2"
     shift # past argument
     ;;
-    -m|--maf)
-    MAF="$2"
-    shift
-    ;;
     -l|--ld_size)
     LDSIZE="$2"
     shift # past argument
@@ -75,6 +71,10 @@ case $key in
     -o|--outdir)
     OUTDIR="$2"
     shift # past argument
+    ;;
+    -c|--config)
+    CONFIG="$2"
+    shift
     ;;
     *)
             # unknown option
@@ -92,29 +92,48 @@ echo SPECIES  = "${SPECIES}"
 echo LOW DENSITY FILE     = "${LOWDENSITY}"
 echo SAMPLE SIZE     = "${SAMPLESIZE}"
 echo LD SAMPLE SIZE     = "${LDSIZE}"
-echo MAF THRESHOLD     = "${MAF}"
 echo OUT FOLDER     = "${OUTDIR}"
+configFile="${CONFIG:-pathNames.txt}"
+echo CONFIG FILE = "${configFile}"
 
 if [[ -n $1 ]]; then
     echo "Last line of file specified as non-opt/last argument:"
     tail -1 $1
 fi
 
+cwd=`pwd`
+echo "current directory is $cwd"
+source $configFile
+
+### Parameters from the config file
+echo "#######################"
+echo "## EXPERIMENT         #"
+echo "#######################"
+
+echo "Experiment type: ${PREFIX}"
+
 echo "################################################"
 echo "## MAIN PATHS TO SOFTWARE - from pathNames.txt #"
 echo "################################################"
-source pathNames.txt
 
 echo "Main path to software is $MAINPATH"
 echo "Path to Rscript is $RPATH"
 echo "Path to Plink is $PLINKPATH"
 echo "Path to Bagle is ${BEAGLEPATH}"
 
+echo "#################################################"
+echo "## GENOTYPE FILTERING THRESHOLDS               ##"
+echo "#################################################"
+
+echo "MAF threshold (to remove unimputable monomorphic loci): $MAF"
+echo "MIND threshold (to remove samples with excess missing data): $MIND"
+echo "GENO threshold (to remove loci with excess missing data): $GENO"
+
+
 echo "#######################################"
 echo "## STEP -1"
 echo "## create unique folders for each run"
 echo "#######################################"
-PREFIX="DENSITYIMP"
 tmstmp=$(date +%s)
 currDate=$(date +%d-%m-%Y)
 folderName=${PREFIX}_$( basename $INPUTFILE).${SAMPLESIZE}_$( basename $LDSIZE)_${tmstmp}.${currDate}
@@ -134,9 +153,9 @@ echo "#######################################"
 echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
-$PLINKPATH --$SPECIES --file ${INPUTFILE} --recode transpose --out transposed
+$PLINKPATH --$SPECIES --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
-$PLINKPATH --$SPECIES --file ${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --recode --out subset
+$PLINKPATH --$SPECIES --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --recode --out subset
 $PLINKPATH --$SPECIES --file subset --freq --out subset
 
 echo "#######################################"
@@ -153,18 +172,18 @@ else
 fi
 
 # create low-density and high-density subsets
-$PLINKPATH --$SPECIES --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
-$PLINKPATH --$SPECIES --file subset --remove keep.ids --recode --out subsetHD
+$PLINKPATH --$SPECIES --allow-extra-chr --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
+$PLINKPATH --$SPECIES --allow-extra-chr --file subset --remove keep.ids --recode --out subsetHD
 # put HD and LD subsets together into a combined file
-$PLINKPATH --$SPECIES --file subsetHD --merge subsetLD --allow-no-sex --recode --out combined
+$PLINKPATH --$SPECIES --allow-extra-chr --file subsetHD --merge subsetLD --allow-no-sex --recode --out combined
 rm subsetHD* subsetLD.ped
 
 echo "#######################################"
 echo "## STEP 1.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
-$PLINKPATH --$SPECIES --file subset --recode A --out originalRaw
-$PLINKPATH --$SPECIES --file combined --recode A --out combinedRaw
+$PLINKPATH --$SPECIES --allow-extra-chr --file subset --recode A --out originalRaw
+$PLINKPATH --$SPECIES --allow-extra-chr --file combined --recode A --out combinedRaw
 rm combinedRaw.nosex combinedRaw.log combined.bed combined.bim originalRaw.nosex originalRaw.log
 
 echo "#######################################"
@@ -197,5 +216,5 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_density.R originalRaw.raw combinedRaw.raw imputed.raw ${LDSIZE} $( basename $INPUTFILE) ${MAINPATH}
-rm originalRaw.raw imputed.raw imputed.map imputed.ped combinedRaw.raw freq.frq combined.* subset.* subsetLD.* transposed.*
+rm originalRaw.raw imputed.raw imputed.map imputed.ped combinedRaw.raw freq.frq combined.* subset.* *.hh subsetLD.* transposed.*
 
