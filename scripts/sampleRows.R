@@ -41,7 +41,7 @@ if (length(pops) == length(uniq_pops) | length(uniq_pops) == 1 ) { ## check if t
   
   npops = length(uniq_pops)
   ninds = round(sampleSize/npops,0)
-  groupby(tfam, V1) %>% sample_n(ninds)
+  keepID <- group_by(tfam, V1) %>% sample_n(ninds)
 }
 
 
