@@ -1,12 +1,13 @@
 #!/bin/bash
 
-# run as: bash imputationAcrossBreeds_Workflow.sh -f <plink_filename> -d <low_density_array> -n <sample_size> -b <breeds> -s <species> -o <outdir>
+# run as: bash imputationAcrossBreeds_workflow.sh -f <plink_filename> -d <low_density_array> -n <sample_size> -b <breeds> -s <species> -o <outdir> -c <config>
 # <plink_filename>: Plink name without .ped/.map extension
 # <low_density_array>: list of SNP names from the desired low density SNP array 
 # <sample_size>: n. of individuals that will be sampled initially from the original file 
 # <breeds>: breed(s) that will be assigned the low density SNP array 
 # <species>: Plink species identifier (e.g. cow, sheep etc.)
 # <outdir> root output directory
+# <config> path to config file with parameters
 # Use -gt 1 to consume two arguments per pass in
 # the loop (e.g. each
 # argument has a corresponding value to go with it).
@@ -31,6 +32,7 @@ Help()
    echo "n     sample size (to be sampled randomly from the dataset) [required]"
    echo "b     breed(s) assigned to the low density SNP array [required]"
    echo "o     output directory [required]"
+   echo "c     path to config file [if not provided, default is used]"
    echo
 }
 
@@ -73,6 +75,10 @@ case $key in
     OUTDIR="$2"
     shift # past argument
     ;;
+    -c|--config)
+    CONFIG="$2"
+    shift
+    ;;
     *)
             # unknown option
     ;;
@@ -89,28 +95,47 @@ echo LOW DENSITY FILE     = "${LOWDENSITY}"
 echo SAMPLE SIZE     = "${SAMPLESIZE}"
 echo BREEDS     = "${BREEDS}"
 echo OUT FOLDER     = "${OUTDIR}"
+configFile="${CONFIG:-pathNames.txt}"
+echo CONFIG FILE = "${configFile}"
 
 if [[ -n $1 ]]; then
     echo "Last line of file specified as non-opt/last argument:"
     tail -1 $1
 fi
 
+cwd=`pwd`
+echo "current directory is $cwd"
+source $configFile
 
-### Hard-coded main paths
+### Parameters from the config file
+echo "#######################"
+echo "## EXPERIMENT         #"
+echo "#######################"
+
+echo "Experiment type: ${PREFIX}"
+
 echo "########################################################"
 echo "## MAIN PATHS TO SOFTWARE - FROM pathNames.txt         #"
 echo "########################################################"
-source pathNames.txt ##
 
 echo "Main path to software is ${MAINPATH}"
 echo "Path to Rscript is ${RPATH}"
 echo "Path to Plink is ${PLINKPATH}"
+echo "Path to Bagle is ${BEAGLEPATH}"
+
+echo "#################################################"
+echo "## GENOTYPE FILTERING THRESHOLDS               ##"
+echo "#################################################"
+
+echo "MAF threshold (to remove unimputable monomorphic loci): $MAF"
+echo "MIND threshold (to remove samples with excess missing data): $MIND"
+echo "GENO threshold (to remove loci with excess missing data): $GENO"
+
 
 echo "#######################################"
 echo "## STEP -1"
 echo "## create unique folders for each run"
 echo "#######################################"
-PREFIX="ACROSSBREEDIMP"
 tmstmp=$(date +%N)
 currDate=$(date +%d-%m-%Y)
 folderName=${PREFIX}_$( basename $INPUTFILE).${SAMPLESIZE}_$(echo $BREEDS | sed 's/,/-/')_${tmstmp}.${currDate}
@@ -134,14 +159,14 @@ echo "## STEP 0"
 echo "## sample individuals from the ped file"
 echo "#######################################"
 
-if [ ! -f "${INPUTFILE}.map" ]; then
-    echo "${INPUTFILE}.map does not exist"
+if [ ! -f "${MAINPATH}/${INPUTFILE}.fam" ]; then
+    echo "${MAINPATH}/${INPUTFILE}.fam does not exist"
     exit
 fi
 
-$PLINKPATH --$SPECIES --file ${INPUTFILE} --recode transpose --out transposed
+$PLINKPATH --$SPECIES --bfile ${MAINPATH}/${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
-$PLINKPATH --${SPECIES} --file ${INPUTFILE} --keep keepIDs.txt --maf 0.01 --bp-space 1 --recode --out subset
+$PLINKPATH --${SPECIES} --bfile ${MAINPATH}/${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --recode --out subset
 
 
 echo "#############################################"
@@ -205,7 +230,6 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_across.R originalRaw.raw combinedRaw.raw imputed.raw $( basename $INPUTFILE) ${BREEDS} $LOWDENSITY $MAINPATH
-rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
-
+#rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
 
 
