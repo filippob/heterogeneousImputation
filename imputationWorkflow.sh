@@ -162,7 +162,7 @@ echo "## STEP 0.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
 $PLINKPATH --$SPECIES --allow-extra-chr --file subset --freq --out subset
-$PLINKPATH --$SPECIES --allow-extra-chr --file subset --recode A --out originalRaw
+$PLINKPATH --$SPECIES --allow-extra-chr --file subset --maf $MAF --recode A --out originalRaw
 
 echo "#######################################"
 echo "## STEP 1"
