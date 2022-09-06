@@ -37,4 +37,5 @@ vignettes/*.pdf
 devR/* 
 
 # simulated data
-simulated_data/r_simdata/*
+simulate_data/r_simdata/*
+simulate_data/seed*
