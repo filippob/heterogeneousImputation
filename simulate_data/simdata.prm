@@ -1,0 +1,72 @@
+/*******************************
+ **     Global parameters     **
+ *******************************/
+title = "Creating a population with - 10k SNP panel";
+nrep  = 1;                    //Number of replicates
+h2    = 0.2;                  //Heritability
+qtlh2 = 0.2;                  //QTL heritability
+phvar = 1.0;                  //Phenotypic variance
+
+/*******************************
+ **   Historical population   **
+ *******************************/
+begin_hp;
+   hg_size = 860 [0]          //Size of the historical generations
+             860 [200];
+   nmlhg   = 400;              //Number of males in the last generation
+end_hp;
+
+/*******************************
+ **        Populations        **
+ *******************************/
+begin_pop = "Line 1";
+   begin_founder;
+      male   [n = 100, pop = "hp"];
+      female [n = 100, pop = "hp"];
+   end_founder;
+   ls  = 1 2 [0.05];          //Litter size
+   pmp = 0.5 /fix;            //Proportion of male progeny
+   ng  = 10;                  //Number of generations
+   md  = maxf;                //Mating design
+   sr  = 0.4;                 //Replacement ratio for sires
+   dr  = 0.2;                 //Replacement ratio for dams
+   sd  = phen /h;             //Selection design
+   cd  = age;                 //Culling design
+   begin_popoutput;
+        data;
+	stat;
+        genotype /gen 10;
+   end_popoutput;
+end_pop;
+
+
+/*******************************
+ **          Genome           **
+ *******************************/
+begin_genome;
+   begin_chr = 10;
+      chrlen = 100;           //Chromosome length
+      nmloci = 1000;           //Number of markers
+      mpos   = rnd;           //Marker positions
+      nma    = all 2;         //Number of marker alleles
+      maf    = eql;           //Marker allele frequencies
+      nqloci = 25;            //Number of QTL
+      qpos   = rnd;           //QTL positions
+      nqa    = rnd 2 3 4;     //Number of QTL alleles
+      qaf    = eql;           //QTL allele frequencies
+      qae    = rndg 0.4;      //QTL allele effects
+   end_chr;
+   mmutr     = 2.5e-5 /recurrent; //Marker mutation rate
+   qmutr     = 2.5e-5;            //QTL mutation rate
+   interference = 25;
+   r_mpos_g;                  //Randomize marker positions across genome
+   r_qpos_g;                  //Randomize QTL positions across genome
+end_genome;
+
+/*******************************
+ **       Output options      **
+ *******************************/
+begin_output;
+   linkage_map;
+   allele_effect;
+end_output;

@@ -35,3 +35,6 @@ vignettes/*.pdf
 
 #RStudio Server project used for development
 devR/* 
+
+# simulated data
+simulated_data/r_simdata/*
