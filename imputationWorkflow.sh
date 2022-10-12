@@ -107,6 +107,9 @@ echo "########################################################"
 echo "Main path to software is ${MAINPATH}"
 echo "Path to Rscript is ${RPATH}"
 echo "Path to Plink is ${PLINKPATH}"
+echo "Path to Beagle is ${BEAGLEPATH}"
+echo "Singularity container for Beagle 5.2 is ${BEAGLESING}"
+echo "Using singularity? ${use_singularity}"
 
 echo "#################################################"
 echo "## GENOTYPE FILTERING THRESHOLDS               ##"
@@ -180,7 +183,15 @@ echo "#######################################"
 ## STEP 2
 ## Imputation of missing genotypes
 $PLINKPATH --$SPECIES --allow-extra-chr --file artificialMissing --recode vcf --out artificialMissing
-java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=artificialMissing.vcf out=imputed
+
+if [ $use_singularity = 1 ]; then
+	echo "beagle run from the singularity container"
+	singularity run $BEAGLESING beagle gt=artificialMissing.vcf out=imputed
+else
+	echo "beagle run from the native java runtime environment"
+	java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=artificialMissing.vcf out=imputed
+fi
+
 $PLINKPATH --$SPECIES --allow-extra-chr --vcf imputed.vcf.gz --recode --out imputed
 $PLINKPATH --$SPECIES --allow-extra-chr --file imputed --recode A --out imputed
 
