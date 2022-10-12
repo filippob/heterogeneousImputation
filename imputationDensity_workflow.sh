@@ -156,7 +156,7 @@ echo "#######################################"
 $PLINKPATH --$SPECIES --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
 $PLINKPATH --$SPECIES --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --recode --out subset
-$PLINKPATH --$SPECIES --file subset --freq --out subset
+$PLINKPATH --$SPECIES --allow-extra-chr --file subset --freq --out subset
 
 echo "#######################################"
 echo "## STEP 1"
@@ -194,10 +194,10 @@ echo "#######################################"
 ## Imputation of missing genotypes
 date +%s > anfangZeit
 ## Imputation of missing genotypes
-$PLINKPATH --$SPECIES --file combined --recode vcf --out combined
+$PLINKPATH --$SPECIES --allow-extra-chr --file combined --recode vcf --out combined
 java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=combined.vcf out=imputed
-$PLINKPATH --$SPECIES --vcf imputed.vcf.gz --recode --out imputed
-$PLINKPATH --$SPECIES --file imputed --recode A --out imputed
+$PLINKPATH --$SPECIES --allow-extra-chr --vcf imputed.vcf.gz --recode --out imputed
+$PLINKPATH --$SPECIES --allow-extra-chr --file imputed --recode A --out imputed
 rm *.vcf *.gz
 
 echo "#######################################"
@@ -206,7 +206,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-$PLINKPATH --$SPECIES --file imputed --freq --out freq 
+$PLINKPATH --$SPECIES --allow-extra-chr --file imputed --freq --out freq 
 rm freq.log freq.nosex
 
 echo "#######################################"
