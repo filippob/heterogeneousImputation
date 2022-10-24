@@ -158,7 +158,7 @@ echo "## stratifying by subpopulation(if any)"
 echo "#######################################"
 $PLINKPATH --$SPECIES --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${MAINPATH}/${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
-$PLINKPATH "--$SPECIES" --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --keep keepIDs.txt --maf $MAF --snps-only 'just-acgt' --not-chr 0 --geno $GENO --mind $MIND --recode --out subset
+$PLINKPATH "--$SPECIES" --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --snps-only 'just-acgt' --not-chr 0 --geno $GENO --mind $MIND --recode --out subset
 
 echo "#######################################"
 echo "## STEP 0.5"
