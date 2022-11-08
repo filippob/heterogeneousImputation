@@ -24,7 +24,7 @@ Help()
    echo "Syntax: imputationDensity_Workflow.sh [-h|f|s|d|n|l|o|c]"
    echo "options:"
    echo "h     print this help"
-   echo "f     Plink filename (path to) [required]"
+   echo "f     Plink filename, binary (path to) [required]"
    echo "s     species [required]"
    echo "d     low density array (list of SNP names) [required]"
    echo "n     sample size (to be sampled randomly from the dataset) [required]"
@@ -101,6 +101,14 @@ if [[ -n $1 ]]; then
     tail -1 $1
 fi
 
+## CHECK IF INPUT FILE EXISTS
+if [ -f "${INPUTFILE}.bed" ]; then
+    echo "$INPUTFILE exists."
+else
+	echo "Input file does not exist - TERMINATING"; 
+	exit 1; 
+fi 
+
 cwd=`pwd`
 echo "current directory is $cwd"
 source $configFile
@@ -137,6 +145,14 @@ echo "#######################################"
 tmstmp=$(date +%s)
 currDate=$(date +%d-%m-%Y)
 folderName=${PREFIX}_$( basename $INPUTFILE).${SAMPLESIZE}_$( basename $LDSIZE)_${tmstmp}.${currDate}
+
+## CHECK IF OUTPUT FOLDER EXISTS
+if [ -d "$OUTDIR" ]; then
+    echo "$OUTDIR exists."
+else
+        echo "Output folder does not exist - TERMINATING";
+        exit 1;
+fi
 
 echo "Folder name is: $folderName"
 cd $OUTDIR
@@ -195,7 +211,15 @@ echo "#######################################"
 date +%s > anfangZeit
 ## Imputation of missing genotypes
 $PLINKPATH --$SPECIES --allow-extra-chr --file combined --recode vcf --out combined
-java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=combined.vcf out=imputed
+
+if [ $use_singularity = 1 ]; then
+	echo "beagle run from the singularity container"
+	singularity run $BEAGLESING beagle gt=combined.vcf out=imputed
+else
+	echo "beagle run from the native java runtime environment"
+	java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=combined.vcf out=imputed
+fi
+
 $PLINKPATH --$SPECIES --allow-extra-chr --vcf imputed.vcf.gz --recode --out imputed
 $PLINKPATH --$SPECIES --allow-extra-chr --file imputed --recode A --out imputed
 rm *.vcf *.gz
