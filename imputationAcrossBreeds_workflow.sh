@@ -209,7 +209,15 @@ echo "#######################################"
 ## Imputation of missing genotypes
 date +%s > anfangZeit
 $PLINKPATH --$SPECIES --file combined --recode vcf --out combined
-java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=combined.vcf out=imputed
+
+if [ $use_singularity = 1 ]; then
+	echo "beagle run from the singularity container"
+	singularity run $BEAGLESING beagle gt=combined.vcf out=imputed
+else
+	echo "beagle run from the native java runtime environment"
+	java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=combined.vcf out=imputed
+fi
+
 $PLINKPATH --$SPECIES --vcf imputed.vcf.gz --recode --out imputed
 $PLINKPATH --$SPECIES --file imputed --recode A --out imputed
 rm imputed.nosex imputed.log
