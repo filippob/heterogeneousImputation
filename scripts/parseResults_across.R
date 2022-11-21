@@ -34,10 +34,9 @@ experiment = paste(ldFile,ldBreed,sep="_")
 # load functions to inject missing
 source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))
 #source("/storage/share/jody/software/scripts/functions.R")
-# originalRaw_file = "/storage/share/jody/filippo/density/prova/DENSITYIMP_chr22.100_20_283948240.04-09-2017/originalRaw.raw"
-# combinedRaw_file = "/storage/share/jody/filippo/density/prova/DENSITYIMP_chr22.100_20_283948240.04-09-2017/combinedRaw.raw"
-# impRaw_file =  "/storage/share/jody/filippo/density/prova/DENSITYIMP_chr22.100_20_283948240.04-09-2017/imputedRaw.raw"
-# idx_file = "/storage/share/jody/filippo/heterogeneousImputation/scripts/devR/imputed.raw"
+# originalRaw_file = "Analysis/peach/across_imputation/ACROSSIMP_combined_18k_filtered.500_CxEL_492582721.21-11-2022/originalRaw.raw"
+# combinedRaw_file = "Analysis/peach/across_imputation/ACROSSIMP_combined_18k_filtered.500_CxEL_492582721.21-11-2022/combinedRaw.raw"
+# impRaw_file =  "Analysis/peach/across_imputation/ACROSSIMP_combined_18k_filtered.500_CxEL_492582721.21-11-2022/imputed.raw"
 
 ###########################################################################################################
 
@@ -122,9 +121,16 @@ elapsed_time <- (end.time-as.POSIXct(anfangZeit, origin="1970-01-01"))
 freq <- read.table("freq.frq",header = TRUE)
 print("MAF read from freq.frq (Plink)")
 
+## LD sample size (get the sample size of the breed for which imputation was attempted)
+ids_ld = file.path(dirname(combinedRaw_file), "keep.ids")
+temp = fread(ids_ld)
+ld_sample_size = nrow(temp)
+rm(temp)
+
 ergebnisse <- data.frame(
   "experiment_name"=experiment,
   "sample_size"=n,
+  "ld_sample_size" = ld_sample_size,
   "LD SNP n."=n_ld_snp,
   "scaling_up to"=m,
   "n_SNP"=n_snp,
