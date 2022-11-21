@@ -164,9 +164,9 @@ if [ ! -f "${MAINPATH}/${INPUTFILE}.fam" ]; then
     exit
 fi
 
-$PLINKPATH --$SPECIES --bfile ${MAINPATH}/${INPUTFILE} --recode transpose --out transposed
+$PLINKPATH --$SPECIES --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --recode transpose --out transposed
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/sampleRows.R ${INPUTFILE}.ped $SAMPLESIZE $MAINPATH
-$PLINKPATH --${SPECIES} --bfile ${MAINPATH}/${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --recode --out subset
+$PLINKPATH --${SPECIES} --allow-extra-chr --bfile ${MAINPATH}/${INPUTFILE} --keep keepIDs.txt --maf $MAF --bp-space 1 --recode --out subset
 
 
 echo "#############################################"
@@ -186,19 +186,19 @@ RASSEN=$(echo $BREEDS | sed 's/,/\\|/') #transforms comma-separated breed names 
 echo "RASSEN     = $RASSEN"
 cut -f1-2 -d' ' subset.ped | grep ${RASSEN} > keep.ids
 # create low-density and high-density subsets
-$PLINKPATH --${SPECIES} --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
-$PLINKPATH --${SPECIES} --file subset --remove keep.ids --recode --out subsetHD
+$PLINKPATH --${SPECIES} --allow-extra-chr --file subset --keep keep.ids --extract ${LOWDENSITY} --recode --out subsetLD
+$PLINKPATH --${SPECIES} --allow-extra-chr --file subset --remove keep.ids --recode --out subsetHD
 # put HD and LD subsets together into a combined file
-$PLINKPATH --${SPECIES} --file subsetHD --merge subsetLD --recode --out combined
+$PLINKPATH --${SPECIES} --allow-extra-chr --file subsetHD --merge subsetLD --recode --out combined
 rm subsetHD* subsetLD.ped
 
 echo "#######################################"
 echo "## STEP 1.5"
 echo "## recode the ped file into a .raw file"
 echo "#######################################"
-$PLINKPATH --${SPECIES} --file subset --freq --out subset
-$PLINKPATH --${SPECIES} --file subset --recode A --out originalRaw
-$PLINKPATH --${SPECIES} --file combined --recode A --out combinedRaw
+$PLINKPATH --${SPECIES} --allow-extra-chr --file subset --freq --out subset
+$PLINKPATH --${SPECIES} --allow-extra-chr --file subset --recode A --out originalRaw
+$PLINKPATH --${SPECIES} --allow-extra-chr --file combined --recode A --out combinedRaw
 rm combinedRaw.nosex combinedRaw.log combined.bed combined.bim originalRaw.nosex originalRaw.log
 
 echo "#######################################"
@@ -208,7 +208,7 @@ echo "#######################################"
 ## STEP 2
 ## Imputation of missing genotypes
 date +%s > anfangZeit
-$PLINKPATH --$SPECIES --file combined --recode vcf --out combined
+$PLINKPATH --$SPECIES --allow-extra-chr --file combined --recode vcf --out combined
 
 if [ $use_singularity = 1 ]; then
 	echo "beagle run from the singularity container"
@@ -218,8 +218,8 @@ else
 	java -Xss5m -Xmx4g -jar $BEAGLEPATH gt=combined.vcf out=imputed
 fi
 
-$PLINKPATH --$SPECIES --vcf imputed.vcf.gz --recode --out imputed
-$PLINKPATH --$SPECIES --file imputed --recode A --out imputed
+$PLINKPATH --$SPECIES --allow-extra-chr --vcf imputed.vcf.gz --recode --out imputed
+$PLINKPATH --$SPECIES --allow-extra-chr --file imputed --recode A --out imputed
 rm imputed.nosex imputed.log
 
 echo "#######################################"
@@ -228,7 +228,7 @@ echo "## Caclulate MAF"
 echo "#######################################"
 ## STEP 3
 ## MAF calculation
-$PLINKPATH --${SPECIES} --file imputed --freq --out freq 
+$PLINKPATH --${SPECIES} --allow-extra-chr --file imputed --freq --out freq 
 rm freq.log freq.nosex
 
 echo "#######################################"
@@ -238,6 +238,6 @@ echo "#######################################"
 ## STEP 4
 ## parsing results
 $RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_across.R originalRaw.raw combinedRaw.raw imputed.raw $( basename $INPUTFILE) ${BREEDS} $LOWDENSITY $MAINPATH
-rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex
+rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex transposed.* imputed.* subset*
 
 
