@@ -17,6 +17,10 @@ pedFile = args[1]
 sampleSize = as.numeric(args[2])
 pathMain = args[3]
 
+# pedFile = "data/maize/filtered_data/maize_cleaned_filtered.ped"
+# sampleSize = 20
+# pathMain = "/home/filippo/Documents/chiara/imputation/"
+
 # load functions to inject missing
 source(paste(pathMain,"heterogeneousImputation/scripts/functions.R",sep="/"))
 
@@ -33,14 +37,20 @@ print("Sampling rows ...")
 ## tfam: V1 = family ID; V2 = sample ID
 pops = tfam$V1
 uniq_pops = unique(pops)
+npops = length(uniq_pops)
+min_n = group_by(tfam, V1) |> summarise(N=n()) |> pull(N) |> min() ## sample size of the smallest population
+ninds = round(sampleSize/npops,0)
+
 if (length(pops) == length(uniq_pops) | length(uniq_pops) == 1 ) { ## check if there are subpopulations 
+  
+  vec <- sample(n,sampleSize)
+  keepID <- tfam[vec,]
+} else if (ninds > min_n) {
   
   vec <- sample(n,sampleSize)
   keepID <- tfam[vec,]
 } else {
   
-  npops = length(uniq_pops)
-  ninds = round(sampleSize/npops,0)
   keepID <- group_by(tfam, V1) %>% sample_n(ninds)
 }
 
