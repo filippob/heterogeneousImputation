@@ -20,6 +20,7 @@ print(paste("experiment name: ", args[4], sep=" "))
 print(paste("low density breed", args[5], sep = " "))
 print(paste("Name of low-density SNP file: ", args[6] ,sep=" "))
 print(paste("Main path is: ", args[7], sep=" "))
+print(paste("Tfam file is: ", args[8], sep=" "))
 
 originalRaw_file = args[1]
 combinedRaw_file = args[2]
@@ -28,6 +29,7 @@ exp_name = args[4]
 ldBreed = args[5]
 ldFile = args[6]
 pathMain = args[7]
+tfam = args[8]
 
 experiment = paste(ldFile,ldBreed,sep="_")
 
@@ -127,9 +129,14 @@ temp = fread(ids_ld)
 ld_sample_size = nrow(temp)
 rm(temp)
 
+tfamx = fread(tfam)
+names(tfamx)[1] = "fam"
+pops = paste(unique(tfamx$fam), collapse=",")
+
 ergebnisse <- data.frame(
   "experiment_name"=experiment,
   "sample_size"=n,
+  "populations" = pops,
   "ld_sample_size" = ld_sample_size,
   "LD SNP n."=n_ld_snp,
   "scaling_up to"=m,

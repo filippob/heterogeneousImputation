@@ -237,7 +237,7 @@ echo "## parsing results"
 echo "#######################################"
 ## STEP 4
 ## parsing results
-$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_across.R originalRaw.raw combinedRaw.raw imputed.raw $( basename $INPUTFILE) ${BREEDS} $LOWDENSITY $MAINPATH
+$RPATH --vanilla ${MAINPATH}/heterogeneousImputation/scripts/parseResults_across.R originalRaw.raw combinedRaw.raw imputed.raw $( basename $INPUTFILE) ${BREEDS} $LOWDENSITY $MAINPATH transposed.tfam
 rm originalRaw.raw imputed.raw combinedRaw.raw subset.ped subset.log subset.map freq.frq combined.* subset.nosex transposed.* imputed.* subset*
 
 
